@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Projects Overview — tsvetoslavtsachev</title>
+  <meta name="description" content="Live overview of all dashboards & research projects with workflow status." />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --bg-card-hover: #1c2230;
+      --border: #30363d;
+      --border-strong: #444c56;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --text-faint: #6e7681;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --amber: #d29922;
+      --red: #f85149;
+      --pill-briefing: #6e40c9;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8fa;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f0f3f6;
+        --border: #d0d7de;
+        --border-strong: #afb8c1;
+        --text: #1f2328;
+        --text-muted: #59636e;
+        --text-faint: #818b98;
+        --accent: #0969da;
+        --green: #1a7f37;
+        --amber: #9a6700;
+        --red: #cf222e;
+        --pill-briefing: #8250df;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 16px;
+    }
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    header .meta {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+    header .meta a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    header .meta a:hover { text-decoration: underline; }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px 48px;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 24px 4px 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .card:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-card-hover);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card h2 .lang {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-faint);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 1px 8px;
+      letter-spacing: 0.02em;
+    }
+    .card .desc {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      flex: 1;
+      min-height: 36px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      min-height: 22px;
+    }
+    .badges img { display: block; height: 20px; }
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      color: white;
+      background: var(--pill-briefing);
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+      transition: background .12s ease, border-color .12s ease;
+    }
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+    }
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .btn.primary:hover {
+      filter: brightness(1.08);
+    }
+    .btn .arrow { font-size: 12px; }
+    .note {
+      font-size: 12px;
+      color: var(--text-faint);
+      font-style: italic;
+    }
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px 24px 32px;
+      color: var(--text-faint);
+      font-size: 12px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 14px;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.green { background: var(--green); }
+    .dot.red   { background: var(--red); }
+    .dot.amber { background: var(--amber); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Projects Overview</h1>
+    <p>Live статус и линкове към всички dashboard-и и изследователски проекти.</p>
+    <div class="meta">
+      Profile: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>
+      · Status badges се обновяват от GitHub Actions при reload.
+    </div>
+    <div class="legend">
+      <span><span class="dot green"></span> последен run passing</span>
+      <span><span class="dot red"></span> failing — отвори repo-то</span>
+      <span><span class="dot amber"></span> in progress / no recent run</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title">Live dashboards</div>
+    <div class="grid">
+
+      <div class="card">
+        <h2>ETF Dashboard <span class="lang">HTML</span></h2>
+        <div class="desc">Sortable ETF dashboard с heatmap, relative strength, exposure drill-down и intermarket panel. Auto-update ежедневно.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ETF-Dashboard/update-data.yml?branch=main&label=update-data" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ETF-Dashboard?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-Dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-Dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Stock Selection Dashboard <span class="lang">Python</span></h2>
+        <div class="desc">Factor-scored US equity dashboard — SEC EDGAR + Alpha Vantage + GitHub Actions + GitHub Pages.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/stock-selection-dashboard/update-data.yml?branch=main&label=update-data" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/stock-selection-dashboard?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stock-selection-dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/stock-selection-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>SP500 Momentum Rank <span class="lang">HTML</span></h2>
+        <div class="desc">Моментум rank на S&amp;P 500 акции — daily update през GitHub Actions.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/SP500-momentumrank/update_data.yml?branch=main&label=update_data" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/SP500-momentumrank?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-momentumrank/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/SP500-momentumrank" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>STOXX600 Momentum Rank <span class="lang">HTML</span></h2>
+        <div class="desc">Моментум rank на европейски STOXX 600 акции — daily update през GitHub Actions.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/stoxx600-momentumrank/update_data.yml?branch=main&label=update_data" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/stoxx600-momentumrank?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stoxx600-momentumrank/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/stoxx600-momentumrank" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>SP500 Rotation Radar <span class="lang">Python</span></h2>
+        <div class="desc">Daily rotation radar за S&amp;P 500 — sector/industry rank history. Workflow свободно работи в 22:00 UTC.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/SP500-rotationradar/daily_update.yml?branch=main&label=daily_update" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/SP500-rotationradar?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/SP500-rotationradar" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>STOXX600 Rotation Radar <span class="lang">Python</span></h2>
+        <div class="desc">Daily rotation radar за европейския STOXX 600. Workflow в 22:00 UTC всеки делник.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/STOXX600-rotationradar/daily_update.yml?branch=main&label=daily_update" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/STOXX600-rotationradar?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/STOXX600-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/STOXX600-rotationradar" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>COT Monitor <span class="lang">HTML</span></h2>
+        <div class="desc">Седмичен COT мониторинг — позициониране на търговците на фючърси. Refresh всяка седмица.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/cot-monitor/weekly-refresh.yml?branch=main&label=weekly-refresh" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/cot-monitor?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-monitor/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-monitor" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>COT CTA Positioning <span class="lang">Python</span></h2>
+        <div class="desc">CTA &amp; managed-money positioning от COT данни. Седмичен refresh.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/cot-cta-positioning-dashboard/weekly-refresh.yml?branch=main&label=weekly-refresh" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/cot-cta-positioning-dashboard?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-cta-positioning-dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-cta-positioning-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Briefing generators (без live page)</div>
+    <div class="grid">
+
+      <div class="card">
+        <h2>US Macro Dashboard <span class="lang">Python</span></h2>
+        <div class="desc">Weekly US macro briefings: FRED данни, cross-lens scoring, исторически аналози. Генерира briefing локално — няма публичен сайт.</div>
+        <div class="badges">
+          <span class="pill">briefing only</span>
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/us-macro-dashboard?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/us-macro-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Briefing-ите се пускат локално; следи last commit за активност.</div>
+      </div>
+
+      <div class="card">
+        <h2>EU Macro Dashboard <span class="lang">Python</span></h2>
+        <div class="desc">Weekly Eurozone macro briefings — пендант на US версията с EA-specific lenses (BTP-Bund, ECB transmission, SPF bands).</div>
+        <div class="badges">
+          <span class="pill">briefing only</span>
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/eu-macro-dashboard?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/eu-macro-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Briefing-ите се пускат локално; следи last commit за активност.</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    Hosted on GitHub Pages · Status badges by <a href="https://shields.io" target="_blank" rel="noopener">shields.io</a> · reload за refresh.
+  </footer>
+</body>
+</html>
