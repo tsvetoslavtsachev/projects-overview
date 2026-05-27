@@ -20,6 +20,8 @@
       --amber: #d29922;
       --red: #f85149;
       --pill-briefing: #6e40c9;
+      --pill-private: #6e7681;
+      --pill-wip: #d29922;
     }
     @media (prefers-color-scheme: light) {
       :root {
@@ -36,6 +38,8 @@
         --amber: #9a6700;
         --red: #cf222e;
         --pill-briefing: #8250df;
+        --pill-private: #59636e;
+        --pill-wip: #9a6700;
       }
     }
     * { box-sizing: border-box; }
@@ -150,6 +154,8 @@
       color: white;
       background: var(--pill-briefing);
     }
+    .pill.private { background: var(--pill-private); }
+    .pill.wip { background: var(--pill-wip); }
     .actions {
       display: flex;
       gap: 8px;
@@ -341,12 +347,12 @@
 
     </div>
 
-    <div class="section-title">Briefing generators (без live page)</div>
+    <div class="section-title">Macro briefings — US · EU · China</div>
     <div class="grid">
 
       <div class="card">
         <h2>US Macro Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Weekly US macro briefings: FRED данни, cross-lens scoring, исторически аналози. Генерира briefing локално — няма публичен сайт.</div>
+        <div class="desc">Weekly US macro briefings: FRED данни, 70+ серии, 7 lens-а, cross-lens scoring, исторически аналози.</div>
         <div class="badges">
           <span class="pill">briefing only</span>
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/us-macro-dashboard?label=last+commit" />
@@ -359,7 +365,7 @@
 
       <div class="card">
         <h2>EU Macro Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Weekly Eurozone macro briefings — пендант на US версията с EA-specific lenses (BTP-Bund, ECB transmission, SPF bands).</div>
+        <div class="desc">Weekly Eurozone briefings — пендант на US с EA-specific lenses (BTP-Bund, ECB transmission, SPF bands). 30 серии, 5 lens-а, на български.</div>
         <div class="badges">
           <span class="pill">briefing only</span>
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/eu-macro-dashboard?label=last+commit" />
@@ -368,6 +374,49 @@
           <a class="btn" href="https://github.com/tsvetoslavtsachev/eu-macro-dashboard" target="_blank" rel="noopener">Repo</a>
         </div>
         <div class="note">Briefing-ите се пускат локално; следи last commit за активност.</div>
+      </div>
+
+      <div class="card">
+        <h2>China Macro Dashboard <span class="lang">Python</span></h2>
+        <div class="desc">Weekly China briefings от akshare — 25 серии, 5 lens-а, HTML + Markdown context. Auto-update понеделник 06:00 UTC.</div>
+        <div class="badges">
+          <span class="pill private">private repo</span>
+          <span class="pill">briefing only</span>
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/china-macro-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Private — status badges изискват auth; weekly_update.yml активен от 2026-05-27.</div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Data layer &amp; aggregation</div>
+    <div class="grid">
+
+      <div class="card">
+        <h2>macro-satellite <span class="lang">Python</span></h2>
+        <div class="desc">Аналитичен сателит — daily time-series collector + delta engine across ELANA dashboards. Parquet storage (Git LFS), запазва ЦЕНИ (не lagged returns). Cron 04:00 София.</div>
+        <div class="badges">
+          <span class="pill wip">in development</span>
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/macro-satellite?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/macro-satellite" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Phase 1 sources: ETF · SP500-RR · STOXX600-RR · COT · VRM. US/EU/China macro briefings — planned.</div>
+      </div>
+
+      <div class="card">
+        <h2>vrm-state <span class="lang">Markdown</span></h2>
+        <div class="desc">VRM state files + handoffs (consumed by macro-satellite). Source of truth за текущ режим, KS статус, alignment score, GMS.</div>
+        <div class="badges">
+          <span class="pill">data input</span>
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/vrm-state?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/vrm-state" target="_blank" rel="noopener">Repo</a>
+        </div>
       </div>
 
     </div>
