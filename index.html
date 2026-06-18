@@ -144,6 +144,19 @@
       min-height: 22px;
     }
     .badges img { display: block; height: 20px; }
+    .data-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 2px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: transparent;
+    }
     .pill {
       display: inline-block;
       font-size: 11px;
@@ -228,11 +241,11 @@
     <p>Live статус и линкове към всички dashboard-и и изследователски проекти.</p>
     <div class="meta">
       Profile: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>
-      · Status badges се обновяват от GitHub Actions при reload.
+      · Shields badge = workflow статус · data-значка = свежест на ДАННИТЕ (macro-satellite).
     </div>
     <div class="legend">
-      <span><span class="dot green"></span> последен run passing</span>
-      <span><span class="dot red"></span> failing — отвори repo-то</span>
+      <span><span class="dot green"></span> данни свежи / run passing</span>
+      <span><span class="dot red"></span> данни застояли или липсват — мъртъв канал</span>
       <span><span class="dot amber"></span> in progress / no recent run</span>
     </div>
   </header>
@@ -428,7 +441,91 @@
   </main>
 
   <footer>
-    Hosted on GitHub Pages · Status badges by <a href="https://shields.io" target="_blank" rel="noopener">shields.io</a> · reload за refresh.
+    Hosted on GitHub Pages · Status badges by <a href="https://shields.io" target="_blank" rel="noopener">shields.io</a> · data-свежест от macro-satellite · reload за refresh.
   </footer>
+
+  <script>
+  // S14 · data-health значки. Четат authoritative-ния data_health контракт от
+  // macro-satellite state.json (status: live / stale / missing). Картата вече не
+  // лъже „зелено" по CI статус — мъртъв канал свети ЧЕРВЕНО по СВЕЖЕСТ на данните.
+  // Без контракт (стар state.json преди деплой) → значка НЕ се рендира (никога
+  // фалшиво зелено). Ключът е repo slug-ът от линка в картата → source в контракта.
+  (function () {
+    var STATE_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/state.json";
+    var REPO_TO_SOURCE = {
+      "ETF-Dashboard": "etf_dashboard",
+      "stock-selection-dashboard": "stock_selection",
+      "SP500-momentumrank": "sp500_momentum",
+      "stoxx600-momentumrank": "stoxx600_momentum",
+      "SP500-rotationradar": "sp500_rotation",
+      "STOXX600-rotationradar": "stoxx600_rotation",
+      "cot-monitor": "cot_monitor",
+      "cot-cta-positioning-dashboard": "cot_cta_positioning",
+      "us-macro-dashboard": "us_macro_state",
+      "eu-macro-dashboard": "eu_macro_state",
+      "china-macro-dashboard": "cn_macro_state",
+      "vrm-state": "vrm_state",
+      "macro-satellite": "__rollup__"
+    };
+    var STATUS_META = {
+      live:    { cls: "green", word: "свежи" },
+      stale:   { cls: "red",   word: "застояли" },
+      missing: { cls: "red",   word: "липсват" }
+    };
+
+    function slugOf(card) {
+      var a = card.querySelector('a[href*="github.com/tsvetoslavtsachev/"]');
+      if (!a) return null;
+      var m = a.getAttribute("href").match(/github\.com\/tsvetoslavtsachev\/([^/"#?]+)/);
+      return m ? m[1] : null;
+    }
+
+    function badgeFor(card) {
+      var db = card.querySelector(".data-badge");
+      if (!db) {
+        var host = card.querySelector(".badges");
+        if (!host) return null;
+        db = document.createElement("span");
+        db.className = "data-badge";
+        host.appendChild(db);
+      }
+      return db;
+    }
+
+    window.renderHealth = function (dh) {
+      if (!dh || !dh.sources) return;  // няма контракт → не пипай (без фалшиво зелено)
+      var cards = document.querySelectorAll(".card");
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var slug = slugOf(card);
+        if (!slug || !REPO_TO_SOURCE.hasOwnProperty(slug)) continue;
+        var key = REPO_TO_SOURCE[slug];
+        var cls, text;
+        if (key === "__rollup__") {
+          var dead = (dh.n_stale || 0) + (dh.n_missing || 0);
+          cls = dead > 0 ? "red" : "green";
+          text = dead > 0 ? ("данни: " + dead + " мъртви канала") : "данни: всички живи";
+        } else {
+          var e = dh.sources[key];
+          if (!e) continue;
+          var meta = STATUS_META[e.status] || STATUS_META.missing;
+          cls = meta.cls;
+          text = e.as_of
+            ? ("данни " + meta.word + ": " + e.as_of + " · " + e.days_stale + "д")
+            : ("данни " + meta.word);
+        }
+        var db = badgeFor(card);
+        if (!db) continue;
+        db.innerHTML = '<span class="dot ' + cls + '"></span>' + text;
+        db.title = "Свежест на данните (macro-satellite data_health контракт)";
+      }
+    };
+
+    fetch(STATE_URL, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (state) { window.renderHealth(state.data_health); })
+      .catch(function (err) { console.warn("data_health fetch failed:", err); });
+  })();
+  </script>
 </body>
 </html>
