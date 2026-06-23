@@ -233,12 +233,55 @@
     .dot.green { background: var(--green); }
     .dot.red   { background: var(--red); }
     .dot.amber { background: var(--amber); }
+
+    /* ── Организмова витрина (Фаза 0) · hero, фетчва един organism.json ── */
+    .organism { margin: 8px 0 26px; }
+    .org-head { margin: 4px 4px 14px; }
+    .org-title { font-size: 20px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+    .org-sub { font-size: 12.5px; color: var(--text-muted); }
+    .org-beat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+    .org-saying { font-size: 13.5px; line-height: 1.55; margin: 0 0 12px; text-align: center; }
+    .org-saying b { font-weight: 700; color: var(--text); }
+    .org-rollup { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .org-pulse { flex: 1; min-width: 84px; text-align: center; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 8px 6px; }
+    .org-pulse b { display: block; font-size: 22px; font-weight: 800; line-height: 1.15; }
+    .org-pulse span { font-size: 10px; color: var(--text-muted); letter-spacing: 0.4px; text-transform: uppercase; }
+    .org-pulse.live b { color: var(--green); }
+    .org-pulse.stale b { color: var(--amber); }
+    .org-pulse.dead b { color: var(--red); }
+    .org-seclabel { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin: 18px 4px 8px; font-weight: 600; }
+    .org-senses { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+    .org-card { background: var(--bg-card); border: 1px solid var(--border); border-left-width: 4px; border-radius: 10px; padding: 12px 14px; }
+    .org-card.g { border-left-color: var(--green); }
+    .org-card.a { border-left-color: var(--amber); }
+    .org-card.r { border-left-color: var(--red); }
+    .org-ct { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .org-big { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
+    .org-meta { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .org-meta b { color: var(--text); font-weight: 600; }
+    .org-regimes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .org-reg { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 11px; text-align: center; }
+    .org-geo { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 5px; }
+    .org-lab { font-size: 14px; font-weight: 800; margin-bottom: 3px; }
+    .org-reg.warn .org-lab { color: var(--amber); }
+    .org-reg.bad .org-lab { color: var(--red); }
+    .org-fr { font-size: 10px; color: var(--text-faint); }
+    .org-health { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 7px; }
+    .org-hs { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font-size: 11.5px; display: flex; align-items: center; gap: 7px; }
+    .org-nm { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .org-d { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+    .org-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .org-dot.g { background: var(--green); }
+    .org-dot.a { background: var(--amber); }
+    .org-dot.r { background: var(--red); }
+    .org-error { background: var(--bg-card); border: 1px solid var(--red); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); }
+    @media (max-width: 560px) { .org-regimes { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <header>
     <h1>Projects Overview</h1>
-    <p>Live статус и линкове към всички dashboard-и и изследователски проекти.</p>
+    <p>Живо състояние на целия аналитичен организъм + линкове към всеки dashboard.</p>
     <div class="meta">
       Profile: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>
       · Shields badge = workflow статус · data-значка = свежест на ДАННИТЕ (macro-satellite).
@@ -251,19 +294,46 @@
   </header>
 
   <main>
+    <!-- ── Организмова витрина · кръвна картина (Фаза 0). Фетчва ЕДИН
+         консолидиран organism.json от raw.githubusercontent (ACAO * → CORS-safe).
+         Производителят е macro-satellite (Python в дневния CI прави multi-source
+         merge: data_health + VRM + funding + барометър + макро режими). ── -->
+    <section class="organism" aria-label="Кръвна картина на организма">
+      <div class="org-head">
+        <div class="org-title">🫀 Организмът · кръвна картина</div>
+        <div class="org-sub" id="org-sub">зарежда живо състояние…</div>
+      </div>
+
+      <div class="org-beat" id="org-beat" hidden>
+        <p class="org-saying" id="org-saying"></p>
+        <div class="org-rollup" id="org-rollup"></div>
+      </div>
+
+      <div class="org-seclabel" id="org-senseslabel" hidden>Сетива — какво казва тялото</div>
+      <div class="org-senses" id="org-senses"></div>
+
+      <div class="org-seclabel" id="org-reglabel" hidden>Макро режими</div>
+      <div class="org-regimes" id="org-regimes"></div>
+
+      <div class="org-seclabel" id="org-healthlabel" hidden>Здраве на сензорите</div>
+      <div class="org-health" id="org-health"></div>
+
+      <div class="org-error" id="org-error" hidden></div>
+    </section>
+
     <div class="section-title">Live dashboards</div>
     <div class="grid">
 
       <div class="card">
-        <h2>ETF Dashboard <span class="lang">HTML</span></h2>
-        <div class="desc">Sortable ETF dashboard с heatmap, relative strength, exposure drill-down и intermarket panel. Auto-update ежедневно.</div>
+        <h2>ETF Rotation Radar <span class="lang">Python</span></h2>
+        <div class="desc">ETF rotation radar — momentum / relative strength, RS Line, rotation quadrants, screener + жив макро-барометър. 131 ETF в 9 категории. Daily update 22:00 UTC.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ETF-Dashboard/update-data.yml?branch=main&label=update-data" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ETF-Dashboard?label=last+commit" />
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ETF-rotationradar/daily_update.yml?branch=main&label=daily_update" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ETF-rotationradar?label=last+commit" />
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-Dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-Dashboard" target="_blank" rel="noopener">Repo</a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-rotationradar" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
@@ -445,6 +515,139 @@
   </footer>
 
   <script>
+  // ── Организмова витрина · фетчва ЕДИН консолидиран organism.json (raw,
+  // ACAO * → CORS-safe). НЕ фетчва cross-origin Pages. Producer-ът (macro-satellite,
+  // Python в дневния CI) прави multi-source merge → docs/organism.json. Падне ли
+  // блок → свети честно (available:false → червено), не нула (договор S14).
+  (function () {
+    var ORGANISM_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/organism.json";
+
+    function el(id) { return document.getElementById(id); }
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+      });
+    }
+
+    function vrmClass(v) { if (!v || !v.available) return "r"; return v.ks_active ? "r" : "a"; }
+    function fundClass(f) { if (!f || !f.available) return "r"; if (f.any_dead) return "r"; return (f.composite != null && f.composite <= 1) ? "g" : "a"; }
+    function baroClass(b) { if (!b || !b.available) return "r"; return (b.alarm_count > 0) ? "a" : "g"; }
+    function regClass(m) { if (!m) return ""; var r = m.regime || ""; if (/recession/i.test(r)) return "bad"; if (/stagflation|deteriorat/i.test(r)) return "warn"; return ""; }
+    function hDot(s) { return s === "live" ? "g" : (s === "stale" ? "a" : "r"); }
+    function dayLabel(e) {
+      if (!e || e.as_of == null) return "липсва";
+      var d = (e.days_stale == null ? "" : e.days_stale + "д");
+      return e.status === "live" ? d : (d + " застоял");
+    }
+
+    function saying(o) {
+      var m = o.macro || {}, v = o.vrm || {}, f = o.funding || {}, b = o.barometer || {}, oh = o.organism_health || {};
+      var parts = [];
+      if (m.us && m.eu) parts.push("Макро: US <b>" + esc(m.us.label) + "</b>, EU <b>" + esc(m.eu.label) + "</b>" + (m.cn ? (", Китай <b>" + esc(m.cn.label) + "</b>") : "") + ".");
+      if (v.available) parts.push("VRM <b>" + esc(v.regime_bg || v.regime) + "</b> — сигнал " + esc(v.signal || "—") + ", Kill Switch " + (v.ks_active ? "<b>включен</b>" : "изключен") + ".");
+      var liq = [];
+      if (f.available) liq.push("ликвидност <b>" + esc(f.verdict || "—") + "</b>");
+      if (b.available) liq.push("поведение " + (b.alarm_count > 0 ? "<b>струпване</b>" : "спокойно"));
+      if (liq.length) parts.push(liq.join("; ") + ".");
+      var dead = (oh.n_stale || 0) + (oh.n_missing || 0);
+      if (dead > 0) parts.push(dead + " " + (dead === 1 ? "канал застоял" : "канала застояли") + ".");
+      return parts.join(" ");
+    }
+
+    function senseCard(title, cls, big, metaHtml) {
+      return '<div class="org-card ' + cls + '"><div class="org-ct">' + title +
+        '<span class="org-dot ' + cls + '"></span></div><div class="org-big">' + big +
+        '</div><div class="org-meta">' + metaHtml + '</div></div>';
+    }
+
+    function vrmCard(v) {
+      if (!v || !v.available) return senseCard("VRM режим", "r", "недостъпен", esc((v && v.error) || "VRM_WEEK.md не се чете"));
+      var src = v.source === "excel-frozen" ? "Excel-замразен" : "data-core (на живо)";
+      var meta = "Сигнал <b>" + esc(v.signal) + "</b><br>Alignment <b>" + esc(v.alignment || "—") +
+        "</b> · GMS <b>" + esc(v.gms || "—") + "</b><br>Kill Switch <b>" + (v.ks_active ? "АКТИВЕН" : "ИЗКЛЮЧЕН") +
+        "</b><br><span style='color:var(--text-faint)'>vrm-state " + esc(v.as_of || "") + " · " + esc(src) + "</span>";
+      return senseCard("VRM режим", vrmClass(v), esc(v.regime_bg || v.regime), meta);
+    }
+
+    function fundCard(f) {
+      if (!f || !f.available) return senseCard("Funding стрес", "r", "недостъпен", esc((f && f.error) || "funding_state.json не се чете"));
+      var lamps = f.lamps || {}, greens = 0, total = 0;
+      Object.keys(lamps).forEach(function (k) { total++; if (lamps[k] === "green") greens++; });
+      var meta = "Composite <b>" + esc(f.composite) + "</b> · лампи <b>" + greens + "/" + total + "</b> зелени<br>" +
+        (f.any_dead ? "⚠️ мъртъв източник" : "няма мъртъв източник") +
+        "<br><span style='color:var(--text-faint)'>treasury-funding-radar · " + esc(f.as_of || "") + " · на живо</span>";
+      return senseCard("Funding стрес", fundClass(f), esc(f.verdict || "—"), meta);
+    }
+
+    function baroCard(b) {
+      if (!b || !b.available) return senseCard("Барометър (10)", "r", "недостъпен", esc((b && b.error) || "barometer_feed.json не се чете"));
+      var word = b.alarm_count > 0 ? "Струпване" : "Спокойно";
+      var meta = "<b>" + esc(b.alarm_count) + " аларма</b> / " + esc(b.base_count) + " в база зона<br>net " + esc(b.net) + " · " +
+        (b.has_confluence ? ("confluence: " + esc(b.direction)) : "без confluence") +
+        "<br><span style='color:var(--text-faint)'>ETF-rotationradar · " + esc(b.as_of || "") + " · на живо</span>";
+      return senseCard("Барометър (10)", baroClass(b), word, meta);
+    }
+
+    function regCard(geo, m) {
+      if (!m) return '<div class="org-reg"><div class="org-geo">' + geo + '</div><div class="org-lab">—</div><div class="org-fr">няма данни</div></div>';
+      var fr = esc(m.as_of || "") + (m.divergences != null ? (" · " + m.divergences + " дивергенции") : "");
+      return '<div class="org-reg ' + regClass(m) + '"><div class="org-geo">' + geo + '</div><div class="org-lab">' +
+        esc(m.label || m.regime || "—") + '</div><div class="org-fr">' + fr + '</div></div>';
+    }
+
+    function render(o) {
+      var oh = o.organism_health || {};
+      el("org-error").hidden = true;
+      el("org-sub").innerHTML = "седмица " + esc(o.week || "—") + " · обновено " +
+        esc((o.generated_at || "").replace("T", " ").replace("+00:00", " UTC")) +
+        " · една витрина, четима от всяка среда";
+
+      el("org-beat").hidden = false;
+      el("org-saying").innerHTML = saying(o);
+      var flag = oh.any_dead
+        ? '<div class="org-pulse"><b style="color:var(--amber)">⚑</b><span>мъртъв канал</span></div>'
+        : '<div class="org-pulse"><b style="color:var(--green)">✓</b><span>всички живи</span></div>';
+      el("org-rollup").innerHTML =
+        '<div class="org-pulse live"><b>' + (oh.n_live != null ? oh.n_live : "—") + '</b><span>живи</span></div>' +
+        '<div class="org-pulse stale"><b>' + (oh.n_stale != null ? oh.n_stale : "—") + '</b><span>застояли</span></div>' +
+        '<div class="org-pulse dead"><b>' + (oh.n_missing != null ? oh.n_missing : "—") + '</b><span>липсват</span></div>' + flag;
+
+      el("org-senseslabel").hidden = false;
+      el("org-senses").innerHTML = [vrmCard(o.vrm), fundCard(o.funding), baroCard(o.barometer)].join("");
+
+      var m = o.macro || {};
+      el("org-reglabel").hidden = false;
+      el("org-regimes").innerHTML = [regCard("🇺🇸 US", m.us), regCard("🇪🇺 EU", m.eu), regCard("🇨🇳 CN", m.cn)].join("");
+
+      var src = oh.sources || {};
+      var keys = Object.keys(src);
+      if (keys.length) {
+        el("org-healthlabel").hidden = false;
+        el("org-health").innerHTML = keys.map(function (k) {
+          var e = src[k];
+          return '<div class="org-hs"><span class="org-dot ' + hDot(e.status) + '"></span>' +
+            '<span class="org-nm" title="' + esc(k) + '">' + esc(k) + '</span>' +
+            '<span class="org-d">' + esc(dayLabel(e)) + '</span></div>';
+        }).join("");
+      }
+    }
+
+    window.renderOrganism = render;  // изложено за тест/диагностика (както renderHealth)
+
+    fetch(ORGANISM_URL, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(render)
+      .catch(function (err) {
+        el("org-sub").textContent = "организмът не може да се зареди в момента";
+        var e = el("org-error");
+        e.hidden = false;
+        e.textContent = "⚠️ organism.json недостъпен (" + err.message + "). Снимката се обновява от дневния CI на macro-satellite — пробвай по-късно.";
+        console.warn("organism fetch failed:", err);
+      });
+  })();
+  </script>
+
+  <script>
   // S14 · data-health значки. Четат authoritative-ния data_health контракт от
   // macro-satellite state.json (status: live / stale / missing). Картата вече не
   // лъже „зелено" по CI статус — мъртъв канал свети ЧЕРВЕНО по СВЕЖЕСТ на данните.
@@ -453,7 +656,7 @@
   (function () {
     var STATE_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/state.json";
     var REPO_TO_SOURCE = {
-      "ETF-Dashboard": "etf_dashboard",
+      "ETF-rotationradar": "etf_prices",
       "stock-selection-dashboard": "stock_selection",
       "SP500-momentumrank": "sp500_momentum",
       "stoxx600-momentumrank": "stoxx600_momentum",
