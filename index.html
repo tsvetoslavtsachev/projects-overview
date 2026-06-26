@@ -563,7 +563,7 @@
     function vrmCard(v) {
       if (!v || !v.available) return senseCard("VRM режим", "r", "недостъпен", esc((v && v.error) || "VRM_WEEK.md не се чете"));
       var src = v.source === "excel-frozen" ? "Excel-замразен" : "data-core (на живо)";
-      var meta = "Сигнал <b>" + esc(v.signal) + "</b><br>Alignment <b>" + esc(v.alignment || "—") +
+      var meta = "Сигнал <b>" + esc(v.signal || "—") + "</b><br>Alignment <b>" + esc(v.alignment || "—") +
         "</b> · GMS <b>" + esc(v.gms || "—") + "</b><br>Kill Switch <b>" + (v.ks_active ? "АКТИВЕН" : "ИЗКЛЮЧЕН") +
         "</b><br><span style='color:var(--text-faint)'>vrm-state " + esc(v.as_of || "") + " · " + esc(src) + "</span>";
       return senseCard("VRM режим", vrmClass(v), esc(v.regime_bg || v.regime), meta);
