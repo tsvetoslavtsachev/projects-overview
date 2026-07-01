@@ -276,6 +276,40 @@
     .org-dot.r { background: var(--red); }
     .org-error { background: var(--bg-card); border: 1px solid var(--red); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); }
     @media (max-width: 560px) { .org-regimes { grid-template-columns: 1fr; } }
+
+    /* ── Контролна зала · drill-down от state.json (богатият feed) ── */
+    .ctrl { margin: 6px 0 26px; }
+    .ctrl-lenses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 4px; }
+    .ctrl-reg { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .cr-geo { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 2px; }
+    .cr-lab { font-size: 13.5px; font-weight: 800; margin-bottom: 9px; }
+    .ctrl-reg.warn .cr-lab { color: var(--amber); }
+    .ctrl-reg.bad .cr-lab { color: var(--red); }
+    .cr-lens { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 11.5px; }
+    .cr-ln { width: 70px; color: var(--text-muted); text-transform: capitalize; }
+    .cr-track { flex: 1; height: 9px; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 5px; overflow: hidden; }
+    .cr-fill { height: 100%; border-radius: 5px 0 0 5px; background: linear-gradient(90deg, var(--accent), #7bb8ff); min-width: 2px; }
+    .cr-val { width: 30px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .ctrl-hint { font-size: 10px; font-weight: 400; color: var(--text-faint); text-transform: none; letter-spacing: 0; }
+    .ctrl-h .ctrl-hint { display: block; margin-top: 2px; }
+    .org-seclabel .ctrl-hint { margin-left: 6px; }
+    .cr-drv { font-size: 10.5px; color: var(--text-faint); margin-top: 7px; }
+    .cr-drv b { color: var(--text-muted); }
+    .ctrl-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 10px; margin-top: 10px; }
+    .ctrl-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .ctrl-h { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 9px; }
+    .ctrl-row { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; padding: 4px 0; border-top: 1px solid var(--border); }
+    .ctrl-row:first-child { border-top: none; }
+    .cr-sym { font-weight: 700; min-width: 42px; }
+    .cr-num { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cr-up { color: var(--green); } .cr-dn { color: var(--red); }
+    .ctrl-sub { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+    .ctrl-sub b { color: var(--text); font-weight: 700; }
+    .ctrl-brief { margin-top: 12px; font-size: 12.5px; }
+    .ctrl-brief a { color: var(--accent); text-decoration: none; margin-right: 16px; }
+    .ctrl-brief a:hover { text-decoration: underline; }
+    .ctrl-na { font-size: 12px; color: var(--text-faint); font-style: italic; }
+    @media (max-width: 640px) { .ctrl-lenses { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -319,6 +353,22 @@
       <div class="org-health" id="org-health"></div>
 
       <div class="org-error" id="org-error" hidden></div>
+    </section>
+
+    <!-- ── Контролна зала · drill-down от state.json (богатият feed на macro-satellite):
+         макро лещи, седмични ETF движения, активни модели, исторически аналог,
+         устойчиви аномалии, briefing линкове. Read-only, CORS-safe, честно-мъртво (S14). ── -->
+    <section class="ctrl" aria-label="Контролна зала — детайли">
+      <div class="org-seclabel">Макро режими · разбивка по лещи <span class="ctrl-hint">скор 0–100 по всяка леща (модел на macro-satellite)</span></div>
+      <div class="ctrl-lenses" id="ctrl-lenses"></div>
+      <div class="ctrl-cols">
+        <div class="ctrl-panel"><div class="ctrl-h">Необичайни ETF движения <span class="ctrl-hint">седмично, спрямо собствената норма на всеки</span></div><div id="ctrl-moves"></div></div>
+        <div class="ctrl-panel"><div class="ctrl-h">Задействани пазарни модели <span class="ctrl-hint">готови шаблони, светнали при съвпадение</span></div><div id="ctrl-patterns"></div></div>
+        <div class="ctrl-panel"><div class="ctrl-h">Исторически аналози <span class="ctrl-hint">най-близките минали седмици + какво стана после</span></div><div id="ctrl-parallel"></div></div>
+        <div class="ctrl-panel"><div class="ctrl-h">Устойчиви аномалии <span class="ctrl-hint">индикатори трайно извън нормата</span></div><div id="ctrl-anom"></div></div>
+      </div>
+      <div class="ctrl-brief" id="ctrl-brief"></div>
+      <div class="org-error" id="ctrl-error" hidden></div>
     </section>
 
     <div class="section-title">Live dashboards</div>
@@ -416,16 +466,45 @@
       </div>
 
       <div class="card">
-        <h2>COT CTA Positioning <span class="lang">Python</span></h2>
-        <div class="desc">CTA &amp; managed-money positioning от COT данни. Седмичен refresh.</div>
+        <h2>Treasury Funding Radar <span class="lang">Python</span></h2>
+        <div class="desc">Водещ (LEADING) сензор за финансиращ стрес — 5 лампи + композитна присъда за ликвидността на доларовата система. Zone-1: пали се преди останалите. Дневен update.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/cot-cta-positioning-dashboard/weekly-refresh.yml?branch=main&label=weekly-refresh" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/cot-cta-positioning-dashboard?label=last+commit" />
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/treasury-funding-radar/update.yml?branch=main&label=update" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/treasury-funding-radar?label=last+commit" />
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-cta-positioning-dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-cta-positioning-dashboard" target="_blank" rel="noopener">Repo</a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/treasury-funding-radar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/treasury-funding-radar" target="_blank" rel="noopener">Repo</a>
         </div>
+        <div class="note">Функционира в hero-панела горе като „сетиво" (funding стрес) · тук се отваря целият радар.</div>
+      </div>
+
+      <div class="card">
+        <h2>Oil Two-Clocks <span class="lang">Python</span></h2>
+        <div class="desc">Петролен монитор на два часовника — Запасът (изпразва се по-бързо) срещу Потокът (лекува се). Композитен светофар + 4 серии с прагове за доказателство/опровержение + ценови фалсификатор. E2 еталонът.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/oil-two-clocks/monitor.yml?branch=main&label=monitor" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/oil-two-clocks?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/oil-two-clocks/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/oil-two-clocks" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Седмичен (Wed+Fri) · показва последно генерирания светофар; освежава се щом добавиш EIA_API_KEY secret.</div>
+      </div>
+
+      <div class="card">
+        <h2>AI Hype Monitor <span class="lang">Python</span></h2>
+        <div class="desc">Измерител на еуфорията в AI сектора — цялата верига от чипове до хиперскейлъри. Пазарни сигнали за здравето на AI индустрията + Rhetoric Monitor (NLP на наратива). Дневен update + тримесечен NLP.</div>
+        <div class="badges">
+          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ai-hype-monitor/daily_update.yml?branch=main&label=daily_update" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ai-hype-monitor?label=last+commit" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ai-hype-monitor/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/ai-hype-monitor" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Строен съвместно с Манус · в активно развитие.</div>
       </div>
 
     </div>
@@ -484,15 +563,15 @@
 
       <div class="card">
         <h2>macro-satellite <span class="lang">Python</span></h2>
-        <div class="desc">Аналитичен сателит — daily time-series collector + delta engine across ELANA dashboards. Parquet storage (Git LFS), запазва ЦЕНИ (не lagged returns). Cron 04:00 София.</div>
+        <div class="desc">Двигателят на тази витрина. Дневен CI сглобява <b>organism.json</b> (кръвната картина горе) + <b>state.json</b> (контролната зала): multi-source merge на здраве, VRM, funding, барометър и макро режими US/EU/CN. Запазва ЦЕНИ, не lagged returns.</div>
         <div class="badges">
-          <span class="pill wip">in development</span>
+          <span class="pill">агрегатор · жив</span>
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/macro-satellite?label=last+commit" />
         </div>
         <div class="actions">
           <a class="btn" href="https://github.com/tsvetoslavtsachev/macro-satellite" target="_blank" rel="noopener">Repo</a>
         </div>
-        <div class="note">Phase 1 sources: ETF · SP500-RR · STOXX600-RR · COT · VRM. US/EU/China macro briefings — planned.</div>
+        <div class="note">Произвежда двата feed-а (raw, CORS-safe · четими от всяка среда) — точно те хранят hero-панела и контролната зала на тази страница.</div>
       </div>
 
       <div class="card">
@@ -728,6 +807,120 @@
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (state) { window.renderHealth(state.data_health); })
       .catch(function (err) { console.warn("data_health fetch failed:", err); });
+  })();
+  </script>
+
+  <script>
+  // ── Контролна зала · drill-down. Фетчва СЪЩИЯ state.json (raw, ACAO *), но
+  // ползва богатите му секции (regimes.lens_scores · week_movements_etf ·
+  // patterns · parallels · anomalies · briefing_links). Отделен IIFE → падне ли
+  // тази секция, hero-панелът и значките остават цели. state.json долу → червено
+  // (честно-мъртво), не празно.
+  (function () {
+    var STATE_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/state.json";
+    function el(id) { return document.getElementById(id); }
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+    function pct(x, d) { if (x == null || isNaN(x)) return "—"; return (x >= 0 ? "+" : "") + Number(x).toFixed(d == null ? 1 : d) + "%"; }
+    function num(x, d) { if (x == null || isNaN(x)) return "—"; return Number(x).toFixed(d == null ? 2 : d); }
+    function regCls(k) { if (/recession/i.test(k || "")) return "bad"; if (/stagflation|deteriorat/i.test(k || "")) return "warn"; return ""; }
+
+    function lensRegion(geo, r) {
+      if (!r) return '<div class="ctrl-reg"><div class="cr-geo">' + geo + '</div><div class="cr-lab">—</div><div class="ctrl-na">няма данни</div></div>';
+      var ls = r.lens_scores || {};
+      var rows = Object.keys(ls).map(function (k) {
+        var v = ls[k], w = Math.max(0, Math.min(100, Number(v) || 0));
+        return '<div class="cr-lens"><span class="cr-ln">' + esc(k) + '</span><span class="cr-track"><span class="cr-fill" style="width:' + w + '%"></span></span><span class="cr-val">' + num(v, 0) + '</span></div>';
+      }).join("");
+      var drv = r.primary_driver ? ('водещ: <b>' + esc(r.primary_driver) + '</b>') : '';
+      var dv = (r.cross_lens_divergences_count != null) ? (' · ' + r.cross_lens_divergences_count + ' дивергенции') : '';
+      return '<div class="ctrl-reg ' + regCls(r.regime_key) + '"><div class="cr-geo">' + geo + '</div><div class="cr-lab">' + esc(r.regime_label_bg || r.regime_key || "—") + '</div>' + rows + '<div class="cr-drv">' + drv + dv + '</div></div>';
+    }
+    function renderLenses(rg) {
+      el("ctrl-lenses").innerHTML = rg
+        ? [lensRegion("🇺🇸 US", rg.us_macro), lensRegion("🇪🇺 EU", rg.eu_macro), lensRegion("🇨🇳 CN", rg.cn_macro)].join("")
+        : '<div class="ctrl-na">няма режимни данни</div>';
+    }
+    function renderMoves(list) {
+      var host = el("ctrl-moves");
+      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">Спокойна седмица — никой ETF не се е отклонил необичайно от собствената си норма.</div>'; return; }
+      var top = list.slice().sort(function (a, b) { return Math.abs(b.z_score || 0) - Math.abs(a.z_score || 0); }).slice(0, 6);
+      host.innerHTML = top.map(function (m) {
+        var up = (m.weekly_change_pct || 0) >= 0;
+        return '<div class="ctrl-row"><span class="cr-sym">' + esc(m.symbol) + '</span><span class="ctrl-sub">z ' + num(m.z_score, 1) + '</span><span class="cr-num ' + (up ? "cr-up" : "cr-dn") + '">' + pct(m.weekly_change_pct, 1) + '</span></div>';
+      }).join("");
+    }
+    function renderPatterns(trig, all) {
+      var host = el("ctrl-patterns");
+      // Показваме ВСИЧКИ наблюдавани шаблони (не само задействаните) — така панелът
+      // обяснява сам себе си: виждаш кои модели се следят + колко близо е всеки.
+      var list = (all && all.length) ? all : (trig || []);
+      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">няма дефинирани модели</div>'; return; }
+      var sorted = list.slice().sort(function (a, b) {
+        var ta = a.triggered ? 1 : 0, tb = b.triggered ? 1 : 0;
+        if (tb !== ta) return tb - ta;
+        return ((b.n_matched || 0) / (b.n_total || 1)) - ((a.n_matched || 0) / (a.n_total || 1));
+      });
+      host.innerHTML = sorted.slice(0, 5).map(function (p) {
+        var on = !!p.triggered;
+        var d = on ? ('<div class="ctrl-sub">' + esc((p.description || "").slice(0, 84)) + '…</div>') : '';
+        return '<div class="ctrl-row"><span style="min-width:16px">' + (on ? '🔴' : '○') + '</span><div style="flex:1"><b>' + esc(p.label_bg || p.pattern_key) + '</b>' + d + '</div><span class="cr-num' + (on ? ' cr-dn' : '') + '">' + esc(p.n_matched || 0) + '/' + esc(p.n_total || 0) + '</span></div>';
+      }).join("");
+    }
+    function renderParallel(list) {
+      var host = el("ctrl-parallel");
+      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">няма достатъчно история за аналог</div>'; return; }
+      var assets = ["SPY", "GLD", "TLT"];
+      var head = '<div class="ctrl-row" style="border:none;color:var(--text-faint);font-size:10.5px"><span style="min-width:116px">седмица · прилика</span>' +
+        assets.map(function (a) { return '<span class="cr-num" style="min-width:42px;color:var(--text-faint)">' + a + ' 3м</span>'; }).join('') + '</div>';
+      var rows = list.slice(0, 3).map(function (p) {
+        var fr = p.forward_returns_pct || {};
+        var cells = assets.map(function (a) {
+          var v = fr[a] ? fr[a]["3m"] : null, up = (v || 0) >= 0;
+          return '<span class="cr-num ' + (v == null ? '' : (up ? 'cr-up' : 'cr-dn')) + '" style="min-width:42px">' + (v == null ? '—' : pct(v, 0)) + '</span>';
+        }).join('');
+        return '<div class="ctrl-row"><span style="min-width:116px"><b>' + esc(p.match_week) + '</b> <span class="ctrl-sub">' + num((p.cosine_similarity || 0) * 100, 0) + '%</span></span>' + cells + '</div>';
+      }).join("");
+      host.innerHTML = head + rows + '<div class="ctrl-sub" style="margin-top:6px">Средно движение 3 месеца след 3-те най-близки минали седмици (кръстосан отпечатък).</div>';
+    }
+    function renderAnom(pa) {
+      var host = el("ctrl-anom");
+      if (!pa) { host.innerHTML = '<div class="ctrl-na">няма данни</div>'; return; }
+      var all = [];
+      ["us", "eu", "cn"].forEach(function (g) { (pa[g] || []).forEach(function (a) { all.push({ g: g, a: a }); }); });
+      all.sort(function (x, y) { return (y.a.mean_abs_z || 0) - (x.a.mean_abs_z || 0); });
+      if (!all.length) { host.innerHTML = '<div class="ctrl-na">няма аномалии</div>'; return; }
+      host.innerHTML = all.slice(0, 4).map(function (o) {
+        return '<div class="ctrl-row"><span class="cr-sym">' + o.g.toUpperCase() + '</span><div style="flex:1" class="ctrl-sub">' + esc(o.a.label_bg || o.a.code) + '</div><span class="cr-num">z ' + num(o.a.mean_abs_z, 1) + '</span></div>';
+      }).join("");
+    }
+    function renderBrief(bl) {
+      var host = el("ctrl-brief");
+      if (!bl) { host.innerHTML = ''; return; }
+      var parts = [];
+      if (bl.narrative_md) parts.push('<a href="' + esc(bl.narrative_md) + '" target="_blank" rel="noopener">📄 Наративен бриф →</a>');
+      if (bl.structured_md) parts.push('<a href="' + esc(bl.structured_md) + '" target="_blank" rel="noopener">📊 Структуриран бриф →</a>');
+      host.innerHTML = parts.join("");
+    }
+
+    function renderControlRoom(s) {
+      el("ctrl-error").hidden = true;
+      renderLenses(s.regimes);
+      renderMoves(s.week_movements_etf);
+      renderPatterns(s.triggered_patterns, s.all_patterns);
+      renderParallel(s.parallels_top3);
+      renderAnom(s.persistent_anomalies);
+      renderBrief(s.briefing_links);
+    }
+    window.renderControlRoom = renderControlRoom;
+
+    fetch(STATE_URL, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(renderControlRoom)
+      .catch(function (err) {
+        var e = el("ctrl-error"); e.hidden = false;
+        e.textContent = "⚠️ state.json недостъпен (" + err.message + "). Детайлите се обновяват от дневния CI на macro-satellite — пробвай по-късно.";
+        console.warn("control room fetch failed:", err);
+      });
   })();
   </script>
 </body>
