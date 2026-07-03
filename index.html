@@ -576,7 +576,7 @@
 
       <div class="card">
         <h2>vrm-state <span class="lang">Markdown</span></h2>
-        <div class="desc">VRM state files + handoffs (consumed by macro-satellite). Source of truth за текущ режим, KS статус, alignment score, GMS.</div>
+        <div class="desc">VRM state files + handoffs (consumed by macro-satellite). Source of truth за текущ режим, KS статус, GMS.</div>
         <div class="badges">
           <span class="pill">data input</span>
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/vrm-state?label=last+commit" />
@@ -642,9 +642,13 @@
     function vrmCard(v) {
       if (!v || !v.available) return senseCard("VRM режим", "r", "недостъпен", esc((v && v.error) || "VRM_WEEK.md не се чете"));
       var src = v.source === "excel-frozen" ? "Excel-замразен" : "data-core (на живо)";
-      var meta = "Сигнал <b>" + esc(v.signal || "—") + "</b><br>Alignment <b>" + esc(v.alignment || "—") +
-        "</b> · GMS <b>" + esc(v.gms || "—") + "</b><br>Kill Switch <b>" + (v.ks_active ? "АКТИВЕН" : "ИЗКЛЮЧЕН") +
-        "</b><br><span style='color:var(--text-faint)'>vrm-state " + esc(v.as_of || "") + " · " + esc(src) + "</span>";
+      // С3 Д3.1 (2026-07-03): alignment score-ът е свален от клиентските канали.
+      // GMS носи Д3.3 бележката (4 прокси сигнала ~ 2 независими фактора).
+      var ksLine = "Kill Switch <b>" + (v.ks_active ? "АКТИВЕН" : "ИЗКЛЮЧЕН") + "</b>";
+      if (v.ks_stale) ksLine += " <span style='color:var(--amber,#B36B00)'>⚠ KS към " + esc(v.ks_as_of || "?") + " — изостава</span>";
+      var meta = "Сигнал <b>" + esc(v.signal || "—") + "</b><br>GMS <b>" + esc(v.gms || "—") +
+        "</b> <span style='color:var(--text-faint)'>(4 прокси сигнала)</span><br>" + ksLine +
+        "<br><span style='color:var(--text-faint)'>vrm-state " + esc(v.as_of || "") + " · " + esc(src) + "</span>";
       return senseCard("VRM режим", vrmClass(v), esc(v.regime_bg || v.regime), meta);
     }
 
