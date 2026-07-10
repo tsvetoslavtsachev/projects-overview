@@ -3,43 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Projects Overview — tsvetoslavtsachev</title>
-  <meta name="description" content="Live overview of all dashboards & research projects with workflow status." />
+  <title>Аналитичният организъм — витрина на уредите</title>
+  <meta name="description" content="Витрина на аналитичните уреди, подредени по петте въпроса на анализатора. Наблюдение, не сигнал." />
   <style>
     :root {
-      --bg: #0d1117;
-      --bg-card: #161b22;
-      --bg-card-hover: #1c2230;
-      --border: #30363d;
-      --border-strong: #444c56;
-      --text: #e6edf3;
-      --text-muted: #8b949e;
-      --text-faint: #6e7681;
-      --accent: #58a6ff;
-      --green: #3fb950;
-      --amber: #d29922;
-      --red: #f85149;
-      --pill-briefing: #6e40c9;
-      --pill-private: #6e7681;
-      --pill-wip: #d29922;
+      /* Палитра — нудж към канона (VISUAL-DESIGN-RESEARCH §1.7, тъмна тема) */
+      --bg: #1a1a19;
+      --bg-card: #232322;
+      --bg-card-hover: #2b2b29;
+      --border: #2c2c2a;
+      --border-strong: #3d3d3a;
+      --text: #f5f5f0;
+      --text-muted: #c3c2b7;
+      --text-faint: #898781;
+      --accent: #3987e5;
+      --green: #4bb36b;
+      --amber: #fab219;
+      --red: #e66767;
+      --pill-bg: #2e2e2b;
     }
     @media (prefers-color-scheme: light) {
       :root {
-        --bg: #f6f8fa;
+        --bg: #fcfcfb;
         --bg-card: #ffffff;
-        --bg-card-hover: #f0f3f6;
-        --border: #d0d7de;
-        --border-strong: #afb8c1;
-        --text: #1f2328;
-        --text-muted: #59636e;
-        --text-faint: #818b98;
-        --accent: #0969da;
-        --green: #1a7f37;
-        --amber: #9a6700;
-        --red: #cf222e;
-        --pill-briefing: #8250df;
-        --pill-private: #59636e;
-        --pill-wip: #9a6700;
+        --bg-card-hover: #f4f3ef;
+        --border: #e1e0d9;
+        --border-strong: #cbcabf;
+        --text: #0b0b0b;
+        --text-muted: #52514e;
+        --text-faint: #898781;
+        --accent: #2a78d6;
+        --green: #1f8a44;
+        --amber: #b5820a;
+        --red: #e34948;
+        --pill-bg: #f0efec;
       }
     }
     * { box-sizing: border-box; }
@@ -47,51 +44,83 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       font-size: 15px;
       line-height: 1.5;
       min-height: 100vh;
     }
+
+    /* Ранен диагностичен банер (VISUAL-DESIGN-RESEARCH §4 — видима грешка, не празна страница) */
+    #errbar {
+      display: none;
+      position: sticky; top: 0; z-index: 9999;
+      background: #e34948; color: #fff;
+      padding: 8px 16px; font-size: 13px; line-height: 1.4;
+    }
+
     header {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 32px 24px 16px;
+      padding: 34px 24px 14px;
     }
     header h1 {
-      margin: 0 0 6px;
+      margin: 0 0 8px;
       font-size: 26px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: -0.01em;
     }
-    header p {
+    header .lede {
       margin: 0;
       color: var(--text-muted);
-      font-size: 14px;
+      font-size: 14.5px;
+      max-width: 780px;
     }
     header .meta {
-      margin-top: 12px;
+      margin-top: 14px;
       font-size: 12px;
       color: var(--text-faint);
+      max-width: 900px;
     }
-    header .meta a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    header .meta a { color: var(--accent); text-decoration: none; }
     header .meta a:hover { text-decoration: underline; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: var(--green); }
+    .dot.red   { background: var(--red); }
+    .dot.amber { background: var(--amber); }
 
     main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 16px 24px 48px;
+      padding: 12px 24px 48px;
     }
-    .section-title {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin: 24px 4px 12px;
+
+    /* Заглавие на въпрос-секция */
+    .qsection { margin: 30px 4px 12px; }
+    .qsection .qnum {
+      display: inline-block;
+      font-size: 12px; font-weight: 700;
+      color: var(--accent);
+      margin-right: 8px;
     }
+    .qsection .qtitle {
+      font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+      display: inline;
+    }
+    .qsection .qhint {
+      display: block;
+      font-size: 12.5px; color: var(--text-faint);
+      margin-top: 4px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -101,47 +130,54 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 18px 18px 16px;
+      padding: 16px 18px 15px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       transition: border-color .15s ease, background .15s ease;
     }
     .card:hover {
       border-color: var(--border-strong);
       background: var(--bg-card-hover);
     }
+    .card.internal { border-style: dashed; }
     .card h2 {
       margin: 0;
       font-size: 16px;
       font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      letter-spacing: -0.005em;
     }
-    .card h2 .lang {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-faint);
-      background: transparent;
-      border: 1px solid var(--border);
+    /* O4 бадж — до заглавието; неутрален (статус-цветовете са резервирани за смисъл) */
+    .o4-badge {
+      display: inline-block;
+      font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--text-muted);
+      border: 1px solid var(--border-strong);
       border-radius: 999px;
-      padding: 1px 8px;
-      letter-spacing: 0.02em;
+      padding: 2px 9px;
+      white-space: nowrap;
+    }
+    .internal-tag {
+      display: inline-block;
+      font-size: 10.5px; font-weight: 600;
+      color: var(--text-faint);
+      border: 1px dashed var(--border-strong);
+      border-radius: 999px;
+      padding: 2px 9px;
     }
     .card .desc {
       color: var(--text-muted);
       font-size: 13.5px;
       flex: 1;
-      min-height: 36px;
+      min-height: 34px;
     }
     .badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
-      min-height: 22px;
+      min-height: 20px;
     }
     .badges img { display: block; height: 20px; }
     .data-badge {
@@ -159,29 +195,26 @@
     }
     .pill {
       display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 11px; font-weight: 600;
       letter-spacing: 0.02em;
       padding: 3px 10px;
       border-radius: 999px;
-      color: white;
-      background: var(--pill-briefing);
+      color: var(--text-muted);
+      background: var(--pill-bg);
+      border: 1px solid var(--border);
     }
-    .pill.private { background: var(--pill-private); }
-    .pill.wip { background: var(--pill-wip); }
     .actions {
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
-      margin-top: 4px;
+      margin-top: 2px;
     }
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 13px; font-weight: 500;
       padding: 6px 12px;
       border-radius: 6px;
       text-decoration: none;
@@ -190,54 +223,30 @@
       background: transparent;
       transition: background .12s ease, border-color .12s ease;
     }
-    .btn:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-strong);
-    }
-    .btn.primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
-    }
-    .btn.primary:hover {
-      filter: brightness(1.08);
-    }
+    .btn:hover { background: var(--bg-card-hover); border-color: var(--border-strong); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { filter: brightness(1.08); }
     .btn .arrow { font-size: 12px; }
     .note {
       font-size: 12px;
       color: var(--text-faint);
       font-style: italic;
     }
+
     footer {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 8px 24px 32px;
+      padding: 10px 24px 32px;
       color: var(--text-faint);
       font-size: 12px;
     }
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 14px;
-    }
-    .legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      display: inline-block;
-    }
-    .dot.green { background: var(--green); }
-    .dot.red   { background: var(--red); }
-    .dot.amber { background: var(--amber); }
 
-    /* ── Организмова витрина (Фаза 0) · hero, фетчва един organism.json ── */
-    .organism { margin: 8px 0 26px; }
+    /* ── Организмова витрина (кръвна картина) · фетчва един organism.json ── */
+    .organism { margin: 10px 0 8px; }
     .org-head { margin: 4px 4px 14px; }
-    .org-title { font-size: 20px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+    .org-title { font-size: 19px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
     .org-sub { font-size: 12.5px; color: var(--text-muted); }
     .org-beat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
     .org-saying { font-size: 13.5px; line-height: 1.55; margin: 0 0 12px; text-align: center; }
@@ -276,65 +285,58 @@
     .org-dot.r { background: var(--red); }
     .org-error { background: var(--bg-card); border: 1px solid var(--red); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); }
     @media (max-width: 560px) { .org-regimes { grid-template-columns: 1fr; } }
-
-    /* ── Контролна зала · drill-down от state.json (богатият feed) ── */
-    .ctrl { margin: 6px 0 26px; }
-    .ctrl-lenses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 4px; }
-    .ctrl-reg { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-    .cr-geo { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 2px; }
-    .cr-lab { font-size: 13.5px; font-weight: 800; margin-bottom: 9px; }
-    .ctrl-reg.warn .cr-lab { color: var(--amber); }
-    .ctrl-reg.bad .cr-lab { color: var(--red); }
-    .cr-lens { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 11.5px; }
-    .cr-ln { width: 70px; color: var(--text-muted); text-transform: capitalize; }
-    .cr-track { flex: 1; height: 9px; background: var(--bg); border: 1px solid var(--border-strong); border-radius: 5px; overflow: hidden; }
-    .cr-fill { height: 100%; border-radius: 5px 0 0 5px; background: linear-gradient(90deg, var(--accent), #7bb8ff); min-width: 2px; }
-    .cr-val { width: 30px; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .ctrl-hint { font-size: 10px; font-weight: 400; color: var(--text-faint); text-transform: none; letter-spacing: 0; }
-    .ctrl-h .ctrl-hint { display: block; margin-top: 2px; }
-    .org-seclabel .ctrl-hint { margin-left: 6px; }
-    .cr-drv { font-size: 10.5px; color: var(--text-faint); margin-top: 7px; }
-    .cr-drv b { color: var(--text-muted); }
-    .ctrl-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); gap: 10px; margin-top: 10px; }
-    .ctrl-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-    .ctrl-h { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 9px; }
-    .ctrl-row { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; padding: 4px 0; border-top: 1px solid var(--border); }
-    .ctrl-row:first-child { border-top: none; }
-    .cr-sym { font-weight: 700; min-width: 42px; }
-    .cr-num { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .cr-up { color: var(--green); } .cr-dn { color: var(--red); }
-    .ctrl-sub { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
-    .ctrl-sub b { color: var(--text); font-weight: 700; }
-    .ctrl-brief { margin-top: 12px; font-size: 12.5px; }
-    .ctrl-brief a { color: var(--accent); text-decoration: none; margin-right: 16px; }
-    .ctrl-brief a:hover { text-decoration: underline; }
-    .ctrl-na { font-size: 12px; color: var(--text-faint); font-style: italic; }
-    @media (max-width: 640px) { .ctrl-lenses { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+  <div id="errbar" role="alert"></div>
+  <script>
+  // Ранен диагностичен слой (VISUAL-DESIGN-RESEARCH §4): всяка парс/рънтайм грешка
+  // → видим червен банер, а не празна страница. Стои ПРЪВ, за да хване дори
+  // синтактична грешка в по-долен <script> блок.
+  (function () {
+    function show(msg) {
+      var b = document.getElementById("errbar");
+      if (!b) return;
+      b.style.display = "block";
+      b.textContent = "⚠ " + msg;
+    }
+    window.addEventListener("error", function (e) {
+      show("JS грешка: " + (e.message || "") + " [" + (e.filename || "") + ":" + (e.lineno || "?") + ":" + (e.colno || "?") + "]");
+    });
+    window.addEventListener("unhandledrejection", function (e) {
+      var r = e && e.reason;
+      show("Необработена грешка: " + ((r && r.message) || r || ""));
+    });
+  })();
+  </script>
+
   <header>
-    <h1>Projects Overview</h1>
-    <p>Живо състояние на целия аналитичен организъм + линкове към всеки dashboard.</p>
+    <h1>Аналитичният организъм</h1>
+    <p class="lede">
+      Витрина на одитираните уреди, подредени по петте въпроса на анализатора:
+      в какъв режим сме · какво се промени · кой води · какво казват позиционирането и сентиментът · струва ли и къде са нивата.
+      Всеки уред е <b>наблюдение, не сигнал</b> — с базови ставки и фалсификатори, не обещания.
+    </p>
     <div class="meta">
-      Profile: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>
-      · Shields badge = workflow статус · data-значка = свежест на ДАННИТЕ (macro-satellite).
+      Всяка карта носи бадж „наблюдение, не сигнал" + хоризонта на прочита (backward / coincident / същодневно).
+      Значката за свежест на данните идва от изричен map към сателитния контракт на macro-satellite
+      (свежи / застояли). Уредите извън контракта показват жизненост чрез датата на последен ъпдейт.
+      Профил: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>.
     </div>
     <div class="legend">
-      <span><span class="dot green"></span> данни свежи / run passing</span>
+      <span><span class="dot green"></span> данни свежи</span>
       <span><span class="dot red"></span> данни застояли или липсват — мъртъв канал</span>
-      <span><span class="dot amber"></span> in progress / no recent run</span>
+      <span><span class="dot amber"></span> в развитие</span>
     </div>
   </header>
 
   <main>
-    <!-- ── Организмова витрина · кръвна картина (Фаза 0). Фетчва ЕДИН
-         консолидиран organism.json от raw.githubusercontent (ACAO * → CORS-safe).
-         Производителят е macro-satellite (Python в дневния CI прави multi-source
-         merge: data_health + VRM + funding + барометър + макро режими). ── -->
+    <!-- ── Кръвна картина (живото лице) · фетчва ЕДИН консолидиран organism.json
+         (raw, ACAO * → CORS-safe). Показва текущи НАБЛЮДЕНИЯ (режим, KS, ликвидност,
+         поведение) — нула performance числа. Падне ли блок → свети честно (S14). ── -->
     <section class="organism" aria-label="Кръвна картина на организма">
       <div class="org-head">
-        <div class="org-title">🫀 Организмът · кръвна картина</div>
+        <div class="org-title">Кръвна картина — състоянието сега</div>
         <div class="org-sub" id="org-sub">зарежда живо състояние…</div>
       </div>
 
@@ -349,159 +351,203 @@
       <div class="org-seclabel" id="org-reglabel" hidden>Макро режими</div>
       <div class="org-regimes" id="org-regimes"></div>
 
-      <div class="org-seclabel" id="org-healthlabel" hidden>Здраве на сензорите</div>
+      <div class="org-seclabel" id="org-healthlabel" hidden>Свежест на каналите</div>
       <div class="org-health" id="org-health"></div>
 
       <div class="org-error" id="org-error" hidden></div>
     </section>
 
-    <!-- ── Контролна зала · drill-down от state.json (богатият feed на macro-satellite):
-         макро лещи, седмични ETF движения, активни модели, исторически аналог,
-         устойчиви аномалии, briefing линкове. Read-only, CORS-safe, честно-мъртво (S14). ── -->
-    <section class="ctrl" aria-label="Контролна зала — детайли">
-      <div class="org-seclabel">Макро режими · разбивка по лещи <span class="ctrl-hint">скор 0–100 по всяка леща (модел на macro-satellite)</span></div>
-      <div class="ctrl-lenses" id="ctrl-lenses"></div>
-      <div class="ctrl-cols">
-        <div class="ctrl-panel"><div class="ctrl-h">Необичайни ETF движения <span class="ctrl-hint">седмично, спрямо собствената норма на всеки</span></div><div id="ctrl-moves"></div></div>
-        <div class="ctrl-panel"><div class="ctrl-h">Задействани пазарни модели <span class="ctrl-hint">готови шаблони, светнали при съвпадение</span></div><div id="ctrl-patterns"></div></div>
-        <div class="ctrl-panel"><div class="ctrl-h">Исторически аналози <span class="ctrl-hint">най-близките минали седмици + какво стана после</span></div><div id="ctrl-parallel"></div></div>
-        <div class="ctrl-panel"><div class="ctrl-h">Устойчиви аномалии <span class="ctrl-hint">индикатори трайно извън нормата</span></div><div id="ctrl-anom"></div></div>
-      </div>
-      <div class="ctrl-brief" id="ctrl-brief"></div>
-      <div class="org-error" id="ctrl-error" hidden></div>
-    </section>
-
-    <div class="section-title">Live dashboards</div>
+    <!-- ══ Въпрос 1 ══ -->
+    <div class="qsection">
+      <span class="qnum">1</span><span class="qtitle">В какъв режим сме?</span>
+      <span class="qhint">Макро режимът на трите региона — единната врата + трите дълбочини.</span>
+    </div>
     <div class="grid">
 
-      <div class="card">
-        <h2>ETF Rotation Radar <span class="lang">Python</span></h2>
-        <div class="desc">ETF rotation radar — momentum / relative strength, RS Line, rotation quadrants, screener + жив макро-барометър. 131 ETF в 9 категории. Daily update 22:00 UTC.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ETF-rotationradar/daily_update.yml?branch=main&label=daily_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ETF-rotationradar?label=last+commit" />
-        </div>
+      <div class="card" data-health="__macro_rollup__">
+        <h2>Macro Web <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Единната врата към макро режима на трите региона (US, EU, Китай) — лещи, аномалии, дивергенции на едно място. Отговаря: в какъв режим сме и къде лещите спорят.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-rotationradar" target="_blank" rel="noopener">Repo</a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/macro-web-dashboard/" target="_blank" rel="noopener">Отвори вратата <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/macro-web-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Свежест = най-застоялият от трите региона отдолу.</div>
+      </div>
+
+      <div class="card" data-health="us_macro_state">
+        <h2>US Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичен макро прочит на САЩ — 70+ FRED серии в 7 лещи, cross-lens скор, исторически аналози. Отговаря: къде е икономическият режим на САЩ.</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/us-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/us-macro-dashboard" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
-      <div class="card">
-        <h2>Stock Selection Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Factor-scored US equity dashboard — 3-факторен композит (Trend / Quality / Value) с равен ERC принос; Risk е отделна режимна леща, не в композита. Нови скорирани сигнали: net payout yield + GP/Assets; P/B и dividend yield остават видими, но нескорирани. Данни: base-first цени от каноничния price-archive + фундаментали Yahoo, plus SEC EDGAR PIT панел за research. Вграден IC / backtest framework (60 месечни среза, survivorship-осъзнат). GitHub Actions + GitHub Pages.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/stock-selection-dashboard/update-data.yml?branch=main&label=update-data" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/stock-selection-dashboard?label=last+commit" />
-        </div>
+      <div class="card" data-health="eu_macro_state">
+        <h2>EU Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичен прочит на Еврозоната — EA-специфични лещи (BTP-Bund, ECB трансмисия, SPF ленти), 30 серии, на български. Отговаря: къде е режимът на Еврозоната.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stock-selection-dashboard/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/stock-selection-dashboard" target="_blank" rel="noopener">Repo</a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/eu-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/eu-macro-dashboard" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
-      <div class="card">
-        <h2>SP500 Momentum Rank <span class="lang">HTML</span></h2>
-        <div class="desc">Моментум rank на S&amp;P 500 акции — daily update през GitHub Actions.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/SP500-momentumrank/update_data.yml?branch=main&label=update_data" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/SP500-momentumrank?label=last+commit" />
-        </div>
+      <div class="card" data-health="cn_macro_state">
+        <h2>China Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичен прочит на Китай — 25 серии в 5 лещи, имотният пазар и кредитът като системни оси. Отговаря: къде е режимът на Китай.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-momentumrank/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/SP500-momentumrank" target="_blank" rel="noopener">Repo</a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/china-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/china-macro-dashboard" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
-      <div class="card">
-        <h2>STOXX600 Momentum Rank <span class="lang">HTML</span></h2>
-        <div class="desc">Моментум rank на европейски STOXX 600 акции — daily update през GitHub Actions.</div>
+    </div>
+
+    <!-- ══ Въпрос 2 ══ -->
+    <div class="qsection">
+      <span class="qnum">2</span><span class="qtitle">Какво се промени?</span>
+      <span class="qhint">Дневният колектор на организма — делти, необичайни движения, исторически аналози.</span>
+    </div>
+    <div class="grid">
+
+      <div class="card" data-health="__rollup__">
+        <h2>Macro Satellite <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Дневният колектор на организма — сглобява кръвната картина горе и следи какво се е променило (седмични делти, необичайни движения, исторически аналози). Отговаря: какво се промени тази седмица.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/stoxx600-momentumrank/update_data.yml?branch=main&label=update_data" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/stoxx600-momentumrank?label=last+commit" />
+          <span class="pill">агрегатор · жив</span>
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stoxx600-momentumrank/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/stoxx600-momentumrank" target="_blank" rel="noopener">Repo</a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/macro-satellite" target="_blank" rel="noopener">Repo</a>
         </div>
+        <div class="note">Произвежда двата feed-а (organism.json + state.json), които хранят кръвната картина горе.</div>
       </div>
 
-      <div class="card">
-        <h2>SP500 Rotation Radar <span class="lang">Python</span></h2>
-        <div class="desc">Daily rotation radar за S&amp;P 500 — sector/industry rank history. Workflow свободно работи в 22:00 UTC.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/SP500-rotationradar/daily_update.yml?branch=main&label=daily_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/SP500-rotationradar?label=last+commit" />
-        </div>
+    </div>
+
+    <!-- ══ Въпрос 3 ══ -->
+    <div class="qsection">
+      <span class="qnum">3</span><span class="qtitle">Кой води?</span>
+      <span class="qhint">Секторна ротация, инерция и факторен инвентар — кои сектори и имена изпъкват (описателно).</span>
+    </div>
+    <div class="grid">
+
+      <div class="card" data-health="sp500_rotation">
+        <h2>SP500 Rotation Radar <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <div class="desc">Ротацията в S&amp;P 500 — секторен и индустриен ранг през времето. Отговаря: кои сектори водят и кои изостават в САЩ.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-rotationradar/" target="_blank" rel="noopener">Отвори радара <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/SP500-rotationradar" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
-      <div class="card">
-        <h2>STOXX600 Rotation Radar <span class="lang">Python</span></h2>
-        <div class="desc">Daily rotation radar за европейския STOXX 600. Workflow в 22:00 UTC всеки делник.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/STOXX600-rotationradar/daily_update.yml?branch=main&label=daily_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/STOXX600-rotationradar?label=last+commit" />
-        </div>
+      <div class="card" data-health="stoxx600_rotation">
+        <h2>STOXX600 Rotation Radar <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <div class="desc">Ротацията в европейския STOXX 600 — секторен ранг през времето. Отговаря: кои сектори водят в Европа.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/STOXX600-rotationradar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/STOXX600-rotationradar/" target="_blank" rel="noopener">Отвори радара <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/STOXX600-rotationradar" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
-      <div class="card">
-        <h2>COT Monitor <span class="lang">HTML</span></h2>
-        <div class="desc">Седмичен COT мониторинг — позициониране на търговците на фючърси. Refresh всяка седмица.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/cot-monitor/weekly-refresh.yml?branch=main&label=weekly-refresh" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/cot-monitor?label=last+commit" />
-        </div>
+      <div class="card" data-health="sp500_momentum">
+        <h2>SP500 Momentum Rank <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <div class="desc">Моментум ранг на акциите в S&amp;P 500. Отговаря: кои имена водят по инерция в САЩ.</div>
+        <div class="badges"></div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-monitor/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/SP500-momentumrank/" target="_blank" rel="noopener">Отвори ранга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/SP500-momentumrank" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card" data-health="stoxx600_momentum">
+        <h2>STOXX600 Momentum Rank <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <div class="desc">Моментум ранг на европейските акции в STOXX 600. Отговаря: кои имена водят по инерция в Европа.</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stoxx600-momentumrank/" target="_blank" rel="noopener">Отвори ранга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/stoxx600-momentumrank" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+      <div class="card" data-health="stock_selection">
+        <h2>Stock Selection <span class="o4-badge">Наблюдение, не сигнал · дескриптивен факторен инвентар</span></h2>
+        <div class="desc">Факторен инвентар за US акции — композит Тренд / Качество / Стойност с равен принос; рискът е отделна режимна леща, не в композита. Отговаря: кои имена изпъкват по фактори (описателно, не препоръка).</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/stock-selection-dashboard/" target="_blank" rel="noopener">Отвори таблото <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/stock-selection-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ Въпрос 4 ══ -->
+    <div class="qsection">
+      <span class="qnum">4</span><span class="qtitle">Какво казват позиционирането и сентиментът?</span>
+      <span class="qhint">Позициониране на фючърсите, поведенчески дислокации, финансиращ стрес, петрол, AI еуфория.</span>
+    </div>
+    <div class="grid">
+
+      <div class="card" data-health="cot_monitor">
+        <h2>COT Monitor <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичното позициониране на търговците на фючърси (11 пазара) — персентил спрямо собствената история. Отговаря: къде позиционирането е разтегнато. Чети като изчерпване/риск, не като посока.</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-monitor/" target="_blank" rel="noopener">Отвори монитора <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-monitor" target="_blank" rel="noopener">Repo</a>
         </div>
       </div>
 
+      <div class="card" data-health="etf_prices">
+        <h2>Behavioral Barometer <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">10 поведенчески индикатора + confluence — струпва ли се стрес в позиционирането и сентимента (HY-спред, XLE/SPY, GLD/TLT, VIX и др.). Повърхност на ETF Rotation Radar. Отговаря: съвпадат ли дислокациите.</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-rotationradar/" target="_blank" rel="noopener">Отвори барометъра <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-rotationradar" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Барометърът живее на повърхността на ETF Rotation Radar (той захранва и „поведение" в кръвната картина).</div>
+      </div>
+
       <div class="card">
-        <h2>Treasury Funding Radar <span class="lang">Python</span></h2>
-        <div class="desc">Същодневен сензор за финансиращ стрес — 5 лампи + композитна присъда за ликвидността на доларовата система. Zone-1: следи постоянно; светва в деня на стреса. Дневен update.</div>
+        <h2>Treasury Funding Radar <span class="o4-badge">Наблюдение, не сигнал · същодневно сетиво</span></h2>
+        <div class="desc">Същодневен сензор за финансиращ стрес — 5 лампи + композитна присъда за доларовата ликвидност. Пали в деня на стреса. Отговаря: има ли напрежение в системата сега.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/treasury-funding-radar/update.yml?branch=main&label=update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/treasury-funding-radar?label=last+commit" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/treasury-funding-radar?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/treasury-funding-radar/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/treasury-funding-radar/" target="_blank" rel="noopener">Отвори радара <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/treasury-funding-radar" target="_blank" rel="noopener">Repo</a>
         </div>
-        <div class="note">Функционира в hero-панела горе като „сетиво" (funding стрес) · тук се отваря целият радар.</div>
+        <div class="note">Извън сателитния контракт — свежест по дата на последен ъпдейт. Функционира и като „сетиво" в кръвната картина.</div>
       </div>
 
       <div class="card">
-        <h2>Oil Sensor <span class="lang">Python</span></h2>
-        <div class="desc">Постоянен петролен сензор (09A редизайн) — citizen светофар + 6 oil_* серии с прагове и ценови фалсификатор. Тезата „два часовника" (Запасът срещу Потокът) е архивирана като епизод №1.</div>
+        <h2>Oil Sensor <span class="o4-badge">Наблюдение, не сигнал · дескриптивен режим</span></h2>
+        <div class="desc">Постоянен петролен сензор — режимно наблюдение с прагове и ценови фалсификатор (6 oil_* серии). Отговаря: в какъв петролен режим сме.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/collectors/oil.yml?branch=main&label=oil" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/collectors?label=last+commit" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/collectors?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/collectors/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/collectors" target="_blank" rel="noopener">Repo</a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/collectors" target="_blank" rel="noopener">Repo (collectors)</a>
         </div>
-        <div class="note">Седмичен (Wed+Fri) citizen светофар от collectors — храни и 6-те oil_* серии в data-core.</div>
+        <div class="note">Изчислителен орган — храни 6-те oil_* серии в data-core, без самостоятелна витрина.</div>
       </div>
 
       <div class="card">
-        <h2>AI Hype Monitor <span class="lang">Python</span></h2>
-        <div class="desc">Измерител на еуфорията в AI сектора — цялата верига от чипове до хиперскейлъри. Пазарни сигнали за здравето на AI индустрията + Rhetoric Monitor (NLP на наратива). Дневен update + тримесечен NLP.</div>
+        <h2>AI Hype Monitor <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Измерител на еуфорията в AI веригата — от чипове до хиперскейлъри, плюс NLP на наратива. Отговаря: колко разтегнат е ентусиазмът.</div>
         <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/ai-hype-monitor/daily_update.yml?branch=main&label=daily_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ai-hype-monitor?label=last+commit" />
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ai-hype-monitor?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ai-hype-monitor/" target="_blank" rel="noopener">Open dashboard <span class="arrow">→</span></a>
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ai-hype-monitor/" target="_blank" rel="noopener">Отвори монитора <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/ai-hype-monitor" target="_blank" rel="noopener">Repo</a>
         </div>
         <div class="note">Строен съвместно с Манус · в активно развитие.</div>
@@ -509,95 +555,43 @@
 
     </div>
 
-    <div class="section-title">Macro briefings — US · EU · China</div>
-    <div class="grid">
-
-      <div class="card">
-        <h2>US Macro Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Weekly US macro briefings: FRED данни, 70+ серии, 7 lens-а, cross-lens scoring, исторически аналози.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/us-macro-dashboard/weekly_update.yml?branch=main&label=weekly_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/us-macro-dashboard?label=last+commit" />
-        </div>
-        <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/us-macro-dashboard/" target="_blank" rel="noopener">Quick <span class="arrow">→</span></a>
-          <a class="btn" href="https://tsvetoslavtsachev.github.io/us-macro-dashboard/briefing_2026-05-27.html" target="_blank" rel="noopener">Deep analysis</a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/us-macro-dashboard" target="_blank" rel="noopener">Repo</a>
-        </div>
-        <div class="note">Понеделник 06:00 UTC · Quick = 30-сек scoreboard · Deep = full analitical (Cross-Lens, Anomalies).</div>
-      </div>
-
-      <div class="card">
-        <h2>EU Macro Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Weekly Eurozone briefings — пендант на US с EA-specific lenses (BTP-Bund, ECB transmission, SPF bands). 30 серии, 5 lens-а, на български.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/eu-macro-dashboard/weekly_update.yml?branch=main&label=weekly_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/eu-macro-dashboard?label=last+commit" />
-        </div>
-        <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/eu-macro-dashboard/" target="_blank" rel="noopener">Quick <span class="arrow">→</span></a>
-          <a class="btn" href="https://tsvetoslavtsachev.github.io/eu-macro-dashboard/briefing_2026-05-27.html" target="_blank" rel="noopener">Deep analysis</a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/eu-macro-dashboard" target="_blank" rel="noopener">Repo</a>
-        </div>
-        <div class="note">Понеделник 06:00 UTC · Quick = 30-сек scoreboard · Deep = full analitical (Cross-Lens, Modules, Anomalies).</div>
-      </div>
-
-      <div class="card">
-        <h2>China Macro Dashboard <span class="lang">Python</span></h2>
-        <div class="desc">Weekly China briefings от akshare — 25 серии, 5 lens-а, HTML + Markdown context. Auto-update понеделник 06:00 UTC.</div>
-        <div class="badges">
-          <img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/tsvetoslavtsachev/china-macro-dashboard/weekly_update.yml?branch=main&label=weekly_update" />
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/china-macro-dashboard?label=last+commit" />
-        </div>
-        <div class="actions">
-          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/china-macro-dashboard/" target="_blank" rel="noopener">Open briefing <span class="arrow">→</span></a>
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/china-macro-dashboard" target="_blank" rel="noopener">Repo</a>
-        </div>
-        <div class="note">Понеделник 06:00 UTC · единен briefing (scoreboard стил). Deep версия — следваща сесия.</div>
-      </div>
-
+    <!-- ══ Въпрос 5 ══ -->
+    <div class="qsection">
+      <span class="qnum">5</span><span class="qtitle">Струва ли и къде са нивата?</span>
+      <span class="qhint">Вътрешни органи (private) — навън стигат само изводите, не числата. Без публичен линк по дизайн.</span>
     </div>
-
-    <div class="section-title">Data layer &amp; aggregation</div>
     <div class="grid">
 
-      <div class="card">
-        <h2>macro-satellite <span class="lang">Python</span></h2>
-        <div class="desc">Двигателят на тази витрина. Дневен CI сглобява <b>organism.json</b> (кръвната картина горе) + <b>state.json</b> (контролната зала): multi-source merge на здраве, VRM, funding, барометър и макро режими US/EU/CN. Запазва ЦЕНИ, не lagged returns.</div>
-        <div class="badges">
-          <span class="pill">агрегатор · жив</span>
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/macro-satellite?label=last+commit" />
-        </div>
-        <div class="actions">
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/macro-satellite" target="_blank" rel="noopener">Repo</a>
-        </div>
-        <div class="note">Произвежда двата feed-а (raw, CORS-safe · четими от всяка среда) — точно те хранят hero-панела и контролната зала на тази страница.</div>
+      <div class="card internal">
+        <h2>Оценъчен орган <span class="o4-badge">Наблюдение, не сигнал · дескриптивна оценка</span></h2>
+        <div class="desc">Обърнатата оценка — вместо да прогнозира цена, разчита каква оценка ЗАЛАГА текущата цена (reverse-DCF рамка). Отговаря: скъпо ли е спрямо това, което цената подразбира.</div>
+        <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
       </div>
 
-      <div class="card">
-        <h2>vrm-state <span class="lang">Markdown</span></h2>
-        <div class="desc">VRM state files + handoffs (consumed by macro-satellite). Source of truth за текущ режим, KS статус, GMS.</div>
-        <div class="badges">
-          <span class="pill">data input</span>
-          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/vrm-state?label=last+commit" />
-        </div>
-        <div class="actions">
-          <a class="btn" href="https://github.com/tsvetoslavtsachev/vrm-state" target="_blank" rel="noopener">Repo</a>
-        </div>
+      <div class="card internal">
+        <h2>Нива (TA орган) <span class="o4-badge">Наблюдение, не сигнал · дескриптивни нива</span></h2>
+        <div class="desc">Ключовите ценови нива и състоянието спрямо тях — подкрепа, тест, пробив — с ценови фалсификатор. Отговаря: къде са нивата и в какво състояние е цената спрямо тях.</div>
+        <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
+      </div>
+
+      <div class="card internal">
+        <h2>Секторен мост <span class="o4-badge">Наблюдение, не сигнал · дескриптивен комбинатор</span></h2>
+        <div class="desc">Комбинира секторно-неутралния ранг, ширината и ротационните рафтове в „кои имена водят per сектор". Read-only комбинатор. Отговаря: кои 3 имена изпъкват във всеки сектор.</div>
+        <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
       </div>
 
     </div>
   </main>
 
   <footer>
-    Hosted on GitHub Pages · Status badges by <a href="https://shields.io" target="_blank" rel="noopener">shields.io</a> · data-свежест от macro-satellite · reload за refresh.
+    Хостнато на GitHub Pages · свежест на данните от macro-satellite (изричен map) · reload за refresh.
   </footer>
 
   <script>
-  // ── Организмова витрина · фетчва ЕДИН консолидиран organism.json (raw,
-  // ACAO * → CORS-safe). НЕ фетчва cross-origin Pages. Producer-ът (macro-satellite,
-  // Python в дневния CI) прави multi-source merge → docs/organism.json. Падне ли
-  // блок → свети честно (available:false → червено), не нула (договор S14).
+  // ── Кръвна картина · фетчва ЕДИН консолидиран organism.json (raw, ACAO * →
+  // CORS-safe). Producer-ът (macro-satellite, Python в дневния CI) прави
+  // multi-source merge → docs/organism.json. Падне ли блок → свети честно
+  // (available:false → червено), не нула (договор S14).
   (function () {
     var ORGANISM_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/organism.json";
 
@@ -642,10 +636,8 @@
     function vrmCard(v) {
       if (!v || !v.available) return senseCard("VRM режим", "r", "недостъпен", esc((v && v.error) || "VRM_WEEK.md не се чете"));
       var src = v.source === "excel-frozen" ? "Excel-замразен" : "data-core (на живо)";
-      // С3 Д3.1 (2026-07-03): alignment score-ът е свален от клиентските канали.
-      // GMS носи Д3.3 бележката (4 прокси сигнала ~ 2 независими фактора).
       var ksLine = "Kill Switch <b>" + (v.ks_active ? "АКТИВЕН" : "ИЗКЛЮЧЕН") + "</b>";
-      if (v.ks_stale) ksLine += " <span style='color:var(--amber,#B36B00)'>⚠ KS към " + esc(v.ks_as_of || "?") + " — изостава</span>";
+      if (v.ks_stale) ksLine += " <span style='color:var(--amber)'>⚠ KS към " + esc(v.ks_as_of || "?") + " — изостава</span>";
       var meta = "Сигнал <b>" + esc(v.signal || "—") + "</b><br>GMS <b>" + esc(v.gms || "—") +
         "</b> <span style='color:var(--text-faint)'>(4 прокси сигнала)</span><br>" + ksLine +
         "<br><span style='color:var(--text-faint)'>vrm-state " + esc(v.as_of || "") + " · " + esc(src) + "</span>";
@@ -683,7 +675,7 @@
       el("org-error").hidden = true;
       el("org-sub").innerHTML = "седмица " + esc(o.week || "—") + " · обновено " +
         esc((o.generated_at || "").replace("T", " ").replace("+00:00", " UTC")) +
-        " · една витрина, четима от всяка среда";
+        " · четимо от всяка среда";
 
       el("org-beat").hidden = false;
       el("org-saying").innerHTML = saying(o);
@@ -700,7 +692,7 @@
 
       var m = o.macro || {};
       el("org-reglabel").hidden = false;
-      el("org-regimes").innerHTML = [regCard("🇺🇸 US", m.us), regCard("🇪🇺 EU", m.eu), regCard("🇨🇳 CN", m.cn)].join("");
+      el("org-regimes").innerHTML = [regCard("US", m.us), regCard("EU", m.eu), regCard("CN", m.cn)].join("");
 
       var src = oh.sources || {};
       var keys = Object.keys(src);
@@ -715,7 +707,7 @@
       }
     }
 
-    window.renderOrganism = render;  // изложено за тест/диагностика (както renderHealth)
+    window.renderOrganism = render;  // изложено за тест/диагностика
 
     fetch(ORGANISM_URL, { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
@@ -731,39 +723,25 @@
   </script>
 
   <script>
-  // S14 · data-health значки. Четат authoritative-ния data_health контракт от
-  // macro-satellite state.json (status: live / stale / missing). Картата вече не
-  // лъже „зелено" по CI статус — мъртъв канал свети ЧЕРВЕНО по СВЕЖЕСТ на данните.
-  // Без контракт (стар state.json преди деплой) → значка НЕ се рендира (никога
-  // фалшиво зелено). Ключът е repo slug-ът от линка в картата → source в контракта.
+  // ── data-health значки · ИЗРИЧЕН map (карта→source ключ през data-health атрибут,
+  // не изведен от github линка — slugOf презумпцията пада с showcase структурата).
+  // Чете authoritative-ния data_health контракт от macro-satellite state.json
+  // (status: live / stale / missing). Без контракт → значка НЕ се рендира (никога
+  // фалшиво зелено). Специални ключове: __rollup__ (целият флот), __macro_rollup__
+  // (най-лошото от трите макро региона за макро-вратата).
   (function () {
     var STATE_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/state.json";
-    var REPO_TO_SOURCE = {
-      "ETF-rotationradar": "etf_prices",
-      "stock-selection-dashboard": "stock_selection",
-      "SP500-momentumrank": "sp500_momentum",
-      "stoxx600-momentumrank": "stoxx600_momentum",
-      "SP500-rotationradar": "sp500_rotation",
-      "STOXX600-rotationradar": "stoxx600_rotation",
-      "cot-monitor": "cot_monitor",
-      "cot-cta-positioning-dashboard": "cot_cta_positioning",
-      "us-macro-dashboard": "us_macro_state",
-      "eu-macro-dashboard": "eu_macro_state",
-      "china-macro-dashboard": "cn_macro_state",
-      "vrm-state": "vrm",
-      "macro-satellite": "__rollup__"
-    };
+    var MACRO_KEYS = ["us_macro_state", "eu_macro_state", "cn_macro_state"];
     var STATUS_META = {
-      live:    { cls: "green", word: "свежи" },
-      stale:   { cls: "red",   word: "застояли" },
-      missing: { cls: "red",   word: "липсват" }
+      live:    { cls: "green", word: "свежи",    rank: 0 },
+      stale:   { cls: "red",   word: "застояли", rank: 1 },
+      missing: { cls: "red",   word: "липсват",  rank: 2 }
     };
 
-    function slugOf(card) {
-      var a = card.querySelector('a[href*="github.com/tsvetoslavtsachev/"]');
-      if (!a) return null;
-      var m = a.getAttribute("href").match(/github\.com\/tsvetoslavtsachev\/([^/"#?]+)/);
-      return m ? m[1] : null;
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+      });
     }
 
     function badgeFor(card) {
@@ -778,32 +756,49 @@
       return db;
     }
 
+    function entryText(e) {
+      var meta = STATUS_META[e.status] || STATUS_META.missing;
+      var text = e.as_of
+        ? ("данни " + meta.word + ": " + esc(e.as_of) + " · " + esc(e.days_stale) + "д")
+        : ("данни " + meta.word);
+      return { cls: meta.cls, text: text };
+    }
+
     window.renderHealth = function (dh) {
       if (!dh || !dh.sources) return;  // няма контракт → не пипай (без фалшиво зелено)
-      var cards = document.querySelectorAll(".card");
+      var cards = document.querySelectorAll(".card[data-health]");
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
-        var slug = slugOf(card);
-        if (!slug || !REPO_TO_SOURCE.hasOwnProperty(slug)) continue;
-        var key = REPO_TO_SOURCE[slug];
+        var key = card.getAttribute("data-health");
         var cls, text;
         if (key === "__rollup__") {
           var dead = (dh.n_stale || 0) + (dh.n_missing || 0);
           cls = dead > 0 ? "red" : "green";
           text = dead > 0 ? ("данни: " + dead + " мъртви канала") : "данни: всички живи";
+        } else if (key === "__macro_rollup__") {
+          // най-застоялият от трите региона: първо по статус-ранг, после по дни
+          var worst = null;
+          for (var j = 0; j < MACRO_KEYS.length; j++) {
+            var me = dh.sources[MACRO_KEYS[j]];
+            if (!me) continue;
+            var mr = (STATUS_META[me.status] || STATUS_META.missing).rank;
+            if (!worst) { worst = me; continue; }
+            var wr = (STATUS_META[worst.status] || STATUS_META.missing).rank;
+            if (mr > wr || (mr === wr && (me.days_stale || 0) > (worst.days_stale || 0))) worst = me;
+          }
+          if (!worst) continue;
+          var mo = entryText(worst);
+          cls = mo.cls; text = mo.text;
         } else {
           var e = dh.sources[key];
           if (!e) continue;
-          var meta = STATUS_META[e.status] || STATUS_META.missing;
-          cls = meta.cls;
-          text = e.as_of
-            ? ("данни " + meta.word + ": " + e.as_of + " · " + e.days_stale + "д")
-            : ("данни " + meta.word);
+          var o = entryText(e);
+          cls = o.cls; text = o.text;
         }
         var db = badgeFor(card);
         if (!db) continue;
         db.innerHTML = '<span class="dot ' + cls + '"></span>' + text;
-        db.title = "Свежест на данните (macro-satellite data_health контракт)";
+        db.title = "Свежест на данните (macro-satellite data_health контракт · изричен map)";
       }
     };
 
@@ -811,120 +806,6 @@
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (state) { window.renderHealth(state.data_health); })
       .catch(function (err) { console.warn("data_health fetch failed:", err); });
-  })();
-  </script>
-
-  <script>
-  // ── Контролна зала · drill-down. Фетчва СЪЩИЯ state.json (raw, ACAO *), но
-  // ползва богатите му секции (regimes.lens_scores · week_movements_etf ·
-  // patterns · parallels · anomalies · briefing_links). Отделен IIFE → падне ли
-  // тази секция, hero-панелът и значките остават цели. state.json долу → червено
-  // (честно-мъртво), не празно.
-  (function () {
-    var STATE_URL = "https://raw.githubusercontent.com/tsvetoslavtsachev/macro-satellite/main/docs/state.json";
-    function el(id) { return document.getElementById(id); }
-    function esc(s) { return String(s == null ? "" : s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
-    function pct(x, d) { if (x == null || isNaN(x)) return "—"; return (x >= 0 ? "+" : "") + Number(x).toFixed(d == null ? 1 : d) + "%"; }
-    function num(x, d) { if (x == null || isNaN(x)) return "—"; return Number(x).toFixed(d == null ? 2 : d); }
-    function regCls(k) { if (/recession/i.test(k || "")) return "bad"; if (/stagflation|deteriorat/i.test(k || "")) return "warn"; return ""; }
-
-    function lensRegion(geo, r) {
-      if (!r) return '<div class="ctrl-reg"><div class="cr-geo">' + geo + '</div><div class="cr-lab">—</div><div class="ctrl-na">няма данни</div></div>';
-      var ls = r.lens_scores || {};
-      var rows = Object.keys(ls).map(function (k) {
-        var v = ls[k], w = Math.max(0, Math.min(100, Number(v) || 0));
-        return '<div class="cr-lens"><span class="cr-ln">' + esc(k) + '</span><span class="cr-track"><span class="cr-fill" style="width:' + w + '%"></span></span><span class="cr-val">' + num(v, 0) + '</span></div>';
-      }).join("");
-      var drv = r.primary_driver ? ('водещ: <b>' + esc(r.primary_driver) + '</b>') : '';
-      var dv = (r.cross_lens_divergences_count != null) ? (' · ' + r.cross_lens_divergences_count + ' дивергенции') : '';
-      return '<div class="ctrl-reg ' + regCls(r.regime_key) + '"><div class="cr-geo">' + geo + '</div><div class="cr-lab">' + esc(r.regime_label_bg || r.regime_key || "—") + '</div>' + rows + '<div class="cr-drv">' + drv + dv + '</div></div>';
-    }
-    function renderLenses(rg) {
-      el("ctrl-lenses").innerHTML = rg
-        ? [lensRegion("🇺🇸 US", rg.us_macro), lensRegion("🇪🇺 EU", rg.eu_macro), lensRegion("🇨🇳 CN", rg.cn_macro)].join("")
-        : '<div class="ctrl-na">няма режимни данни</div>';
-    }
-    function renderMoves(list) {
-      var host = el("ctrl-moves");
-      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">Спокойна седмица — никой ETF не се е отклонил необичайно от собствената си норма.</div>'; return; }
-      var top = list.slice().sort(function (a, b) { return Math.abs(b.z_score || 0) - Math.abs(a.z_score || 0); }).slice(0, 6);
-      host.innerHTML = top.map(function (m) {
-        var up = (m.weekly_change_pct || 0) >= 0;
-        return '<div class="ctrl-row"><span class="cr-sym">' + esc(m.symbol) + '</span><span class="ctrl-sub">z ' + num(m.z_score, 1) + '</span><span class="cr-num ' + (up ? "cr-up" : "cr-dn") + '">' + pct(m.weekly_change_pct, 1) + '</span></div>';
-      }).join("");
-    }
-    function renderPatterns(trig, all) {
-      var host = el("ctrl-patterns");
-      // Показваме ВСИЧКИ наблюдавани шаблони (не само задействаните) — така панелът
-      // обяснява сам себе си: виждаш кои модели се следят + колко близо е всеки.
-      var list = (all && all.length) ? all : (trig || []);
-      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">няма дефинирани модели</div>'; return; }
-      var sorted = list.slice().sort(function (a, b) {
-        var ta = a.triggered ? 1 : 0, tb = b.triggered ? 1 : 0;
-        if (tb !== ta) return tb - ta;
-        return ((b.n_matched || 0) / (b.n_total || 1)) - ((a.n_matched || 0) / (a.n_total || 1));
-      });
-      host.innerHTML = sorted.slice(0, 5).map(function (p) {
-        var on = !!p.triggered;
-        var d = on ? ('<div class="ctrl-sub">' + esc((p.description || "").slice(0, 84)) + '…</div>') : '';
-        return '<div class="ctrl-row"><span style="min-width:16px">' + (on ? '🔴' : '○') + '</span><div style="flex:1"><b>' + esc(p.label_bg || p.pattern_key) + '</b>' + d + '</div><span class="cr-num' + (on ? ' cr-dn' : '') + '">' + esc(p.n_matched || 0) + '/' + esc(p.n_total || 0) + '</span></div>';
-      }).join("");
-    }
-    function renderParallel(list) {
-      var host = el("ctrl-parallel");
-      if (!list || !list.length) { host.innerHTML = '<div class="ctrl-na">няма достатъчно история за аналог</div>'; return; }
-      var assets = ["SPY", "GLD", "TLT"];
-      var head = '<div class="ctrl-row" style="border:none;color:var(--text-faint);font-size:10.5px"><span style="min-width:116px">седмица · прилика</span>' +
-        assets.map(function (a) { return '<span class="cr-num" style="min-width:42px;color:var(--text-faint)">' + a + ' 3м</span>'; }).join('') + '</div>';
-      var rows = list.slice(0, 3).map(function (p) {
-        var fr = p.forward_returns_pct || {};
-        var cells = assets.map(function (a) {
-          var v = fr[a] ? fr[a]["3m"] : null, up = (v || 0) >= 0;
-          return '<span class="cr-num ' + (v == null ? '' : (up ? 'cr-up' : 'cr-dn')) + '" style="min-width:42px">' + (v == null ? '—' : pct(v, 0)) + '</span>';
-        }).join('');
-        return '<div class="ctrl-row"><span style="min-width:116px"><b>' + esc(p.match_week) + '</b> <span class="ctrl-sub">' + num((p.cosine_similarity || 0) * 100, 0) + '%</span></span>' + cells + '</div>';
-      }).join("");
-      host.innerHTML = head + rows + '<div class="ctrl-sub" style="margin-top:6px">Средно движение 3 месеца след 3-те най-близки минали седмици (кръстосан отпечатък).</div>';
-    }
-    function renderAnom(pa) {
-      var host = el("ctrl-anom");
-      if (!pa) { host.innerHTML = '<div class="ctrl-na">няма данни</div>'; return; }
-      var all = [];
-      ["us", "eu", "cn"].forEach(function (g) { (pa[g] || []).forEach(function (a) { all.push({ g: g, a: a }); }); });
-      all.sort(function (x, y) { return (y.a.mean_abs_z || 0) - (x.a.mean_abs_z || 0); });
-      if (!all.length) { host.innerHTML = '<div class="ctrl-na">няма аномалии</div>'; return; }
-      host.innerHTML = all.slice(0, 4).map(function (o) {
-        return '<div class="ctrl-row"><span class="cr-sym">' + o.g.toUpperCase() + '</span><div style="flex:1" class="ctrl-sub">' + esc(o.a.label_bg || o.a.code) + '</div><span class="cr-num">z ' + num(o.a.mean_abs_z, 1) + '</span></div>';
-      }).join("");
-    }
-    function renderBrief(bl) {
-      var host = el("ctrl-brief");
-      if (!bl) { host.innerHTML = ''; return; }
-      var parts = [];
-      if (bl.narrative_md) parts.push('<a href="' + esc(bl.narrative_md) + '" target="_blank" rel="noopener">📄 Наративен бриф →</a>');
-      if (bl.structured_md) parts.push('<a href="' + esc(bl.structured_md) + '" target="_blank" rel="noopener">📊 Структуриран бриф →</a>');
-      host.innerHTML = parts.join("");
-    }
-
-    function renderControlRoom(s) {
-      el("ctrl-error").hidden = true;
-      renderLenses(s.regimes);
-      renderMoves(s.week_movements_etf);
-      renderPatterns(s.triggered_patterns, s.all_patterns);
-      renderParallel(s.parallels_top3);
-      renderAnom(s.persistent_anomalies);
-      renderBrief(s.briefing_links);
-    }
-    window.renderControlRoom = renderControlRoom;
-
-    fetch(STATE_URL, { cache: "no-store" })
-      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(renderControlRoom)
-      .catch(function (err) {
-        var e = el("ctrl-error"); e.hidden = false;
-        e.textContent = "⚠️ state.json недостъпен (" + err.message + "). Детайлите се обновяват от дневния CI на macro-satellite — пробвай по-късно.";
-        console.warn("control room fetch failed:", err);
-      });
   })();
   </script>
 </body>
