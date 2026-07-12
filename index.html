@@ -285,6 +285,52 @@
     .org-dot.r { background: var(--red); }
     .org-error { background: var(--bg-card); border: 1px solid var(--red); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--red); }
     @media (max-width: 560px) { .org-regimes { grid-template-columns: 1fr; } }
+
+    /* ── „Как работят каналите" · прибиращ се блок в header-а (M23-FIX1 §2.1) ── */
+    .channels {
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+    }
+    .channels > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 11px 14px;
+      font-size: 13.5px; font-weight: 600;
+      color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .channels > summary::-webkit-details-marker { display: none; }
+    .channels > summary::before {
+      content: "\25B8"; color: var(--text-faint); font-size: 11px;
+      transition: transform .12s ease;
+    }
+    .channels[open] > summary::before { transform: rotate(90deg); }
+    .channels > summary:hover { color: var(--accent); }
+    .channels .ch-body { padding: 2px 14px 14px; overflow-x: auto; }
+    .channels table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+    .channels th, .channels td {
+      text-align: left; padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .channels th {
+      color: var(--text-faint); font-weight: 600; font-size: 11.5px;
+      text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .channels td { color: var(--text-muted); }
+    .channels td:first-child { color: var(--text); font-weight: 600; }
+    .channels td b { color: var(--text); font-weight: 700; }
+    .channels tr:last-child td { border-bottom: none; }
+    .channels .ch-foot {
+      margin-top: 10px; font-size: 11.5px;
+      color: var(--text-faint); font-style: italic;
+    }
+
+    /* Линк в .note (напр. котвата към кръвната картина) — на бранд, не браузърно синьо */
+    .card .note a { color: var(--accent); text-decoration: none; }
+    .card .note a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -318,8 +364,8 @@
       Всеки уред е <b>наблюдение, не сигнал</b> — с базови ставки и фалсификатори, не обещания.
     </p>
     <div class="meta">
-      Всяка карта носи бадж „наблюдение, не сигнал" + хоризонта на прочита (backward / coincident / същодневно).
-      Значката за свежест на данните идва от изричен map към сателитния контракт на macro-satellite
+      Всяка карта носи бадж „наблюдение, не сигнал" + хоризонта на прочита (backward = гледа назад · coincident = сегашно състояние · същодневно).
+      Значката за свежест на данните идва от изрична карта към сателитния контракт на macro-satellite
       (свежи / застояли). Уредите извън контракта показват жизненост чрез датата на последен ъпдейт.
       Профил: <a href="https://github.com/tsvetoslavtsachev" target="_blank" rel="noopener">github.com/tsvetoslavtsachev</a>.
     </div>
@@ -328,13 +374,74 @@
       <span><span class="dot red"></span> данни застояли или липсват — мъртъв канал</span>
       <span><span class="dot amber"></span> в развитие</span>
     </div>
+
+    <details class="channels">
+      <summary>Как работят каналите — ритъм и свежест</summary>
+      <div class="ch-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Канал</th>
+              <th>Източник</th>
+              <th>Ритъм на публикуване</th>
+              <th>„Свежо" значи</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Макро US / EU / CN</td>
+              <td>FRED · Eurostat · NBS + Caixin</td>
+              <td>Седмично — основен ъпдейт понеделник 06:00 UTC (US добавя петъчен външен fetch 16:00 UTC и съботен export)</td>
+              <td>&le; 7 дни (до следващия понеделнишки цикъл)</td>
+            </tr>
+            <tr>
+              <td>COT Monitor</td>
+              <td>CFTC</td>
+              <td>Данните носят дата <b>вторник</b>, публикуват се <b>петък</b> (петък 21:00 UTC, след CFTC 15:30 ET release)</td>
+              <td>свежи до <b>следващия петък</b></td>
+            </tr>
+            <tr>
+              <td>Ротация / Момент (SP500 · STOXX)</td>
+              <td>борсови цени</td>
+              <td>Делнично (Пн–Пт) след борсовото затваряне — ротация 22:00 UTC · момент 08:37 / 09:13 UTC</td>
+              <td>до следващото борсово затваряне</td>
+            </tr>
+            <tr>
+              <td>Stock Selection</td>
+              <td>борсови цени + фактори</td>
+              <td>Делнично (Пн–Пт) 22:15 UTC, след US затваряне</td>
+              <td>до следващото борсово затваряне</td>
+            </tr>
+            <tr>
+              <td>ETF Radar / Барометър</td>
+              <td>ETF цени</td>
+              <td>Делнично (Пн–Пт) 22:00 UTC, след US затваряне; поведенческият барометър се чете седмично (петък)</td>
+              <td>до следващото борсово затваряне</td>
+            </tr>
+            <tr>
+              <td>AI Hype Monitor</td>
+              <td>ETF цени + SEC filings (NLP)</td>
+              <td>В развитие · CI паузиран (ръчно пускане); тримесечните NLP компоненти носят ~45-дневен SEC lag</td>
+              <td>по дата на последен ъпдейт</td>
+            </tr>
+            <tr>
+              <td>Кръвна картина</td>
+              <td>macro-satellite (агрегатор)</td>
+              <td>Дневно 04:00 UTC (дневен колектор на организма)</td>
+              <td>обновява се всяка сутрин</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="ch-foot">Значките по картите идват от изричния data_health контракт на сателита; каналите се съдят по СОБСТВЕНИЯ си календар, не по календарни дни.</div>
+      </div>
+    </details>
   </header>
 
   <main>
     <!-- ── Кръвна картина (живото лице) · фетчва ЕДИН консолидиран organism.json
          (raw, ACAO * → CORS-safe). Показва текущи НАБЛЮДЕНИЯ (режим, KS, ликвидност,
          поведение) — нула performance числа. Падне ли блок → свети честно (S14). ── -->
-    <section class="organism" aria-label="Кръвна картина на организма">
+    <section class="organism" id="org" aria-label="Кръвна картина на организма">
       <div class="org-head">
         <div class="org-title">Кръвна картина — състоянието сега</div>
         <div class="org-sub" id="org-sub">зарежда живо състояние…</div>
@@ -357,6 +464,25 @@
       <div class="org-error" id="org-error" hidden></div>
     </section>
 
+    <!-- ══ Работната врата · съботният екран (входната точка, преди петте въпроса) ══ -->
+    <div class="qsection">
+      <span class="qtitle">Работната врата</span>
+      <span class="qhint">Входната точка на седмичния ритуал — съботният аналитичен екран.</span>
+    </div>
+    <div class="grid">
+
+      <div class="card internal">
+        <h2>Съботният аналитичен екран <span class="internal-tag">вътрешен уред · отваря се на работната машина</span></h2>
+        <div class="desc">Всяка събота — режимът и възрастта му, пазарното платно (29 актива, седмица и месец), секторната разбивка и топ/дъно на ножовете. Входната точка на седмичния ритуал.</div>
+        <div class="note">Живото състояние — в <a href="#org">кръвната картина по-горе</a>.</div>
+        <div class="actions">
+          <a class="btn primary" href="http://localhost:8151" target="_blank" rel="noopener">Отвори екрана <span class="arrow">&rarr;</span></a>
+        </div>
+        <div class="note">Локален адрес — работи на машината на собственика.</div>
+      </div>
+
+    </div>
+
     <!-- ══ Въпрос 1 ══ -->
     <div class="qsection">
       <span class="qnum">1</span><span class="qtitle">В какъв режим сме?</span>
@@ -365,7 +491,7 @@
     <div class="grid">
 
       <div class="card" data-health="__macro_rollup__">
-        <h2>Macro Web <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <h2>Macro Web <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
         <div class="desc">Единната врата към макро режима на трите региона (US, EU, Китай) — лещи, аномалии, дивергенции на едно място. Отговаря: в какъв режим сме и къде лещите спорят.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -376,8 +502,8 @@
       </div>
 
       <div class="card" data-health="us_macro_state">
-        <h2>US Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
-        <div class="desc">Седмичен макро прочит на САЩ — 70+ FRED серии в 7 лещи, cross-lens скор, исторически аналози. Отговаря: къде е икономическият режим на САЩ.</div>
+        <h2>US Macro <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичен макро прочит на САЩ — 70+ FRED серии в 7 лещи, обобщаващ скор през тях, исторически аналози. Отговаря: къде е икономическият режим на САЩ.</div>
         <div class="badges"></div>
         <div class="actions">
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/us-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
@@ -386,7 +512,7 @@
       </div>
 
       <div class="card" data-health="eu_macro_state">
-        <h2>EU Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <h2>EU Macro <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
         <div class="desc">Седмичен прочит на Еврозоната — EA-специфични лещи (BTP-Bund, ECB трансмисия, SPF ленти), 30 серии, на български. Отговаря: къде е режимът на Еврозоната.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -396,7 +522,7 @@
       </div>
 
       <div class="card" data-health="cn_macro_state">
-        <h2>China Macro <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <h2>China Macro <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
         <div class="desc">Седмичен прочит на Китай — 25 серии в 5 лещи, имотният пазар и кредитът като системни оси. Отговаря: къде е режимът на Китай.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -415,7 +541,7 @@
     <div class="grid">
 
       <div class="card" data-health="__rollup__">
-        <h2>Macro Satellite <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <h2>Macro Satellite <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
         <div class="desc">Дневният колектор на организма — сглобява кръвната картина горе и следи какво се е променило (седмични делти, необичайни движения, исторически аналози). Отговаря: какво се промени тази седмица.</div>
         <div class="badges">
           <span class="pill">агрегатор · жив</span>
@@ -436,7 +562,7 @@
     <div class="grid">
 
       <div class="card" data-health="sp500_rotation">
-        <h2>SP500 Rotation Radar <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <h2>SP500 Rotation Radar <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
         <div class="desc">Ротацията в S&amp;P 500 — секторен и индустриен ранг през времето. Отговаря: кои сектори водят и кои изостават в САЩ.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -446,7 +572,7 @@
       </div>
 
       <div class="card" data-health="stoxx600_rotation">
-        <h2>STOXX600 Rotation Radar <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <h2>STOXX600 Rotation Radar <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
         <div class="desc">Ротацията в европейския STOXX 600 — секторен ранг през времето. Отговаря: кои сектори водят в Европа.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -456,7 +582,7 @@
       </div>
 
       <div class="card" data-health="sp500_momentum">
-        <h2>SP500 Momentum Rank <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <h2>SP500 Momentum Rank <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
         <div class="desc">Моментум ранг на акциите в S&amp;P 500. Отговаря: кои имена водят по инерция в САЩ.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -466,7 +592,7 @@
       </div>
 
       <div class="card" data-health="stoxx600_momentum">
-        <h2>STOXX600 Momentum Rank <span class="o4-badge">Наблюдение, не сигнал · backward</span></h2>
+        <h2>STOXX600 Momentum Rank <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
         <div class="desc">Моментум ранг на европейските акции в STOXX 600. Отговаря: кои имена водят по инерция в Европа.</div>
         <div class="badges"></div>
         <div class="actions">
@@ -476,7 +602,7 @@
       </div>
 
       <div class="card" data-health="stock_selection">
-        <h2>Stock Selection <span class="o4-badge">Наблюдение, не сигнал · дескриптивен факторен инвентар</span></h2>
+        <h2>Stock Selection <span class="o4-badge" title="Наблюдение, не сигнал: описателен факторен инвентар — описва кои имена изпъкват по фактори, не препоръчва покупка или продажба.">Наблюдение, не сигнал · дескриптивен факторен инвентар</span></h2>
         <div class="desc">Факторен инвентар за US акции — композит Тренд / Качество / Стойност с равен принос; рискът е отделна режимна леща, не в композита. Отговаря: кои имена изпъкват по фактори (описателно, не препоръка).</div>
         <div class="badges"></div>
         <div class="actions">
@@ -495,18 +621,19 @@
     <div class="grid">
 
       <div class="card" data-health="cot_monitor">
-        <h2>COT Monitor <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
+        <h2>COT Monitor <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
         <div class="desc">Седмичното позициониране на търговците на фючърси (11 пазара) — персентил спрямо собствената история. Отговаря: къде позиционирането е разтегнато. Чети като изчерпване/риск, не като посока.</div>
         <div class="badges"></div>
         <div class="actions">
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-monitor/" target="_blank" rel="noopener">Отвори монитора <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-monitor" target="_blank" rel="noopener">Repo</a>
         </div>
+        <div class="note">Публикация: петък (данни от вторник) — свежо до следващия петък.</div>
       </div>
 
       <div class="card" data-health="etf_prices">
-        <h2>Behavioral Barometer <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
-        <div class="desc">10 поведенчески индикатора + confluence — струпва ли се стрес в позиционирането и сентимента (HY-спред, XLE/SPY, GLD/TLT, VIX и др.). Повърхност на ETF Rotation Radar. Отговаря: съвпадат ли дислокациите.</div>
+        <h2>Behavioral Barometer <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">10 поведенчески индикатора + сигнал за струпване (confluence) — струпва ли се стрес в позиционирането и сентимента (HY-спред, XLE/SPY, GLD/TLT, VIX и др.). Повърхност на ETF Rotation Radar. Отговаря: съвпадат ли дислокациите.</div>
         <div class="badges"></div>
         <div class="actions">
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-rotationradar/" target="_blank" rel="noopener">Отвори барометъра <span class="arrow">&rarr;</span></a>
@@ -516,7 +643,7 @@
       </div>
 
       <div class="card">
-        <h2>Treasury Funding Radar <span class="o4-badge">Наблюдение, не сигнал · същодневно сетиво</span></h2>
+        <h2>Treasury Funding Radar <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието, не е препоръка. Хоризонт същодневен — пали в деня на стреса, без лаг.">Наблюдение, не сигнал · същодневно сетиво</span></h2>
         <div class="desc">Същодневен сензор за финансиращ стрес — 5 лампи + композитна присъда за доларовата ликвидност. Пали в деня на стреса. Отговаря: има ли напрежение в системата сега.</div>
         <div class="badges">
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/treasury-funding-radar?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
@@ -529,7 +656,7 @@
       </div>
 
       <div class="card">
-        <h2>Oil Sensor <span class="o4-badge">Наблюдение, не сигнал · дескриптивен режим</span></h2>
+        <h2>Oil Sensor <span class="o4-badge" title="Наблюдение, не сигнал: описателен режим — описва в какъв петролен режим сме, не препоръчва.">Наблюдение, не сигнал · дескриптивен режим</span></h2>
         <div class="desc">Постоянен петролен сензор — режимно наблюдение с прагове и ценови фалсификатор (6 oil_* серии). Отговаря: в какъв петролен режим сме.</div>
         <div class="badges">
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/collectors?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
@@ -541,8 +668,8 @@
       </div>
 
       <div class="card">
-        <h2>AI Hype Monitor <span class="o4-badge">Наблюдение, не сигнал · coincident</span></h2>
-        <div class="desc">Измерител на еуфорията в AI веригата — от чипове до хиперскейлъри, плюс NLP на наратива. Отговаря: колко разтегнат е ентусиазмът.</div>
+        <h2>AI Hype Monitor <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Измерител на еуфорията в AI веригата — от чипове до хиперскейлъри, плюс разчитане на езика на наратива (NLP). Отговаря: колко разтегнат е ентусиазмът.</div>
         <div class="badges">
           <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/ai-hype-monitor?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
         </div>
@@ -558,25 +685,25 @@
     <!-- ══ Въпрос 5 ══ -->
     <div class="qsection">
       <span class="qnum">5</span><span class="qtitle">Струва ли и къде са нивата?</span>
-      <span class="qhint">Вътрешни органи (private) — навън стигат само изводите, не числата. Без публичен линк по дизайн.</span>
+      <span class="qhint">Вътрешни органи — навън стигат само изводите, не числата. Без публичен линк по дизайн.</span>
     </div>
     <div class="grid">
 
       <div class="card internal">
-        <h2>Оценъчен орган <span class="o4-badge">Наблюдение, не сигнал · дескриптивна оценка</span></h2>
+        <h2>Оценъчен орган <span class="o4-badge" title="Наблюдение, не сигнал: описателна оценка — описва каква оценка залага текущата цена, не препоръчва.">Наблюдение, не сигнал · дескриптивна оценка</span></h2>
         <div class="desc">Обърнатата оценка — вместо да прогнозира цена, разчита каква оценка ЗАЛАГА текущата цена (reverse-DCF рамка). Отговаря: скъпо ли е спрямо това, което цената подразбира.</div>
         <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
       </div>
 
       <div class="card internal">
-        <h2>Нива (TA орган) <span class="o4-badge">Наблюдение, не сигнал · дескриптивни нива</span></h2>
+        <h2>Нива (TA орган) <span class="o4-badge" title="Наблюдение, не сигнал: описателни нива — показва къде са ценовите нива и състоянието спрямо тях, не препоръчва вход или изход.">Наблюдение, не сигнал · дескриптивни нива</span></h2>
         <div class="desc">Ключовите ценови нива и състоянието спрямо тях — подкрепа, тест, пробив — с ценови фалсификатор. Отговаря: къде са нивата и в какво състояние е цената спрямо тях.</div>
         <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
       </div>
 
       <div class="card internal">
-        <h2>Секторен мост <span class="o4-badge">Наблюдение, не сигнал · дескриптивен комбинатор</span></h2>
-        <div class="desc">Комбинира секторно-неутралния ранг, ширината и ротационните рафтове в „кои имена водят per сектор". Read-only комбинатор. Отговаря: кои 3 имена изпъкват във всеки сектор.</div>
+        <h2>Секторен мост <span class="o4-badge" title="Наблюдение, не сигнал: описателен комбинатор — подрежда наличното (ранг, ширина, ротация), не препоръчва.">Наблюдение, не сигнал · дескриптивен комбинатор</span></h2>
+        <div class="desc">Комбинира секторно-неутралния ранг, ширината и ротационните рафтове в „кои имена водят по сектор". Комбинатор само за четене. Отговаря: кои 3 имена изпъкват във всеки сектор.</div>
         <div class="badges"><span class="internal-tag">вътрешен орган · без публичен линк</span></div>
       </div>
 
@@ -584,7 +711,7 @@
   </main>
 
   <footer>
-    Хостнато на GitHub Pages · свежест на данните от macro-satellite (изричен map) · reload за refresh.
+    Хостнато на GitHub Pages · свежест на данните от macro-satellite (изрична карта) · презареди за обновяване.
   </footer>
 
   <script>
