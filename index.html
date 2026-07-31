@@ -395,10 +395,16 @@
               <td>&le; 7 дни (до следващия понеделнишки цикъл)</td>
             </tr>
             <tr>
+              <td>Макро BG</td>
+              <td>Eurostat (НСИ) · ЕЦБ Data Portal (БНБ)</td>
+              <td>Седмично, понеделник 06:00 UTC (изравнено с фамилията US / EU / CN)</td>
+              <td>&le; 7 дни (до следващия понеделнишки цикъл)</td>
+            </tr>
+            <tr>
               <td>COT Monitor</td>
               <td>CFTC</td>
-              <td>Данните носят дата <b>вторник</b>, публикуват се <b>петък</b> (петък 21:00 UTC, след CFTC 15:30 ET release)</td>
-              <td>свежи до <b>следващия петък</b></td>
+              <td>Данните носят дата <b>вторник</b>, публикуват се <b>събота</b> (събота 08:00 UTC, след CFTC 15:30 ET release в петък; слотът е изместен нарочно, защото петъчният четеше базата един цикъл назад)</td>
+              <td>свежи до <b>следващата събота</b></td>
             </tr>
             <tr>
               <td>Ротация / Момент (SP500 · STOXX)</td>
@@ -473,7 +479,7 @@
 
       <div class="card internal">
         <h2>Съботният аналитичен екран <span class="internal-tag">вътрешен уред · нелистнат адрес</span></h2>
-        <div class="desc">Всяка събота — режимът и възрастта му, пазарното платно (29 актива, седмица и месец), секторната разбивка и топ/дъно на ножовете. Входната точка на седмичния ритуал.</div>
+        <div class="desc">Всяка събота — режимът и възрастта му, пазарното платно (31 актива, седмица и месец), секторната разбивка и топ/дъно на ножовете. Входната точка на седмичния ритуал.</div>
         <div class="note">Живото състояние — в <a href="#org">кръвната картина по-горе</a>.</div>
         <div class="actions">
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/weekly-screen/" target="_blank" rel="noopener">Отвори екрана <span class="arrow">&rarr;</span></a>
@@ -486,7 +492,7 @@
     <!-- ══ Въпрос 1 ══ -->
     <div class="qsection">
       <span class="qnum">1</span><span class="qtitle">В какъв режим сме?</span>
-      <span class="qhint">Макро режимът на трите региона — единната врата + трите дълбочини.</span>
+      <span class="qhint">Макро режимът: единната врата към трите региона плюс трите им дълбочини. България е четвърта дълбочина, но стои извън вратата.</span>
     </div>
     <div class="grid">
 
@@ -529,6 +535,20 @@
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/china-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/china-macro-dashboard" target="_blank" rel="noopener">Repo</a>
         </div>
+      </div>
+
+      <div class="card">
+        <h2>Макро България <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
+        <div class="desc">Седмичен прочит на България: 19 скорирани серии в 7 лещи (растеж, инфлация, труд, кредит, външен сектор, имоти, държавни финанси) плюс 4 контекстни, които стоят до композита, но не влизат в него. Отгоре три надстройки: температура (колко бум-серии горят над оптималната си зона), балонна двойка (горят ли имотите и кредитът едновременно) и тензия (колко от напрежението между лещите се гаси взаимно). Отговаря: къде е режимът на България.</div>
+        <div class="badges">
+          <img alt="last commit" src="https://img.shields.io/github/last-commit/tsvetoslavtsachev/bg-macro-dashboard?label=%D0%BF%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%B5%D0%BD+%D1%8A%D0%BF%D0%B4%D0%B5%D0%B9%D1%82" />
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/bg-macro-dashboard/" target="_blank" rel="noopener">Отвори брифинга <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://tsvetoslavtsachev.github.io/bg-macro-dashboard/methodology.html" target="_blank" rel="noopener">Методология</a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/bg-macro-dashboard" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Извън сателитния контракт, затова свежестта се чете по датата на последен ъпдейт. Стои и извън единната врата: Macro Web покрива само US, EU и Китай. Каталог 23 записа (19 скорирани + 4 контекстни), обновяване понеделник 06:00 UTC.</div>
       </div>
 
     </div>
@@ -582,6 +602,17 @@
         </div>
       </div>
 
+      <div class="card" data-health="etf_prices">
+        <h2>ETF Rotation Radar <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
+        <div class="desc">Ротацията между класовете активи: 131 ETF-а в 9 категории, всеки ранкиран вътре в собствената си категория. Ротационните квадранти делят имената на четири (стабилни водачи, качествен откат, изкачващи се, хронични изоставащи), а RS линията мери всеки ETF спрямо бенчмарка на неговата категория, не спрямо SPY. Отговаря: кои класове активи водят и кои изостават.</div>
+        <div class="badges"></div>
+        <div class="actions">
+          <a class="btn primary" href="https://tsvetoslavtsachev.github.io/ETF-rotationradar/" target="_blank" rel="noopener">Отвори радара <span class="arrow">&rarr;</span></a>
+          <a class="btn" href="https://github.com/tsvetoslavtsachev/ETF-rotationradar" target="_blank" rel="noopener">Repo</a>
+        </div>
+        <div class="note">Същата повърхност носи и поведенческия барометър, описан при Въпрос 4. Ливъридж, обратни и волатилни продукти са изключени нарочно.</div>
+      </div>
+
       <div class="card" data-health="sp500_momentum">
         <h2>SP500 Momentum Rank <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт backward — обобщава вече случилото се (гледа назад).">Наблюдение, не сигнал · backward</span></h2>
         <div class="desc">Моментум ранг на акциите в S&amp;P 500. Отговаря: кои имена водят по инерция в САЩ.</div>
@@ -623,13 +654,13 @@
 
       <div class="card" data-health="cot_monitor">
         <h2>COT Monitor <span class="o4-badge" title="Наблюдение, не сигнал: описва състоянието с базова ставка и фалсификатор, не е препоръка. Хоризонт coincident — отчита сегашното състояние, нито изпреварва, нито изостава пазара.">Наблюдение, не сигнал · coincident</span></h2>
-        <div class="desc">Седмичното позициониране на търговците на фючърси (11 пазара) — персентил спрямо собствената история. Отговаря: къде позиционирането е разтегнато. Чети като изчерпване/риск, не като посока.</div>
+        <div class="desc">Седмичното позициониране на търговците на фючърси (38 пазара) — персентил спрямо собствената история. Отговаря: къде позиционирането е разтегнато. Чети като изчерпване/риск, не като посока.</div>
         <div class="badges"></div>
         <div class="actions">
           <a class="btn primary" href="https://tsvetoslavtsachev.github.io/cot-monitor/" target="_blank" rel="noopener">Отвори монитора <span class="arrow">&rarr;</span></a>
           <a class="btn" href="https://github.com/tsvetoslavtsachev/cot-monitor" target="_blank" rel="noopener">Repo</a>
         </div>
-        <div class="note">Публикация: петък (данни от вторник) — свежо до следващия петък.</div>
+        <div class="note">Публикация: събота 08:00 UTC (данните носят дата вторник, CFTC ги пуска петък 15:30 ET), свежо до следващата събота.</div>
       </div>
 
       <div class="card" data-health="etf_prices">

@@ -1,22 +1,36 @@
 # Projects Overview
 
-Live overview на всички dashboard-и и изследователски проекти на [@tsvetoslavtsachev](https://github.com/tsvetoslavtsachev).
+Витрината на аналитичния организъм на [@tsvetoslavtsachev](https://github.com/tsvetoslavtsachev):
+една страница, която подрежда живите уреди по петте въпроса на анализатора.
 
-Single-page HTML, hostnat на GitHub Pages. Status badge-ите се обновяват автоматично от GitHub Actions API през [shields.io](https://shields.io) — reload-ни страницата за пресни данни.
+**Live:** <https://tsvetoslavtsachev.github.io/projects-overview/>
 
-## Секции
+Всеки уред носи бадж „наблюдение, не сигнал" плюс хоризонта на прочита. Горе стои
+кръвната картина, която се пълни на живо от `macro-satellite` (`organism.json`).
+Значката за свежест идва от изричния `data_health` контракт на сателита; уредите
+извън контракта показват жизненост чрез датата на последен ъпдейт.
 
-- **Live dashboards** — ETF · Stock Selection · SP500/STOXX Momentum · SP500/STOXX Rotation · COT Monitor · COT CTA
-- **Macro briefings — US · EU · China** — седмични briefing pipelines (FRED / ECB+Eurostat / akshare)
-- **Data layer & aggregation** — `macro-satellite` (агрегатор, in development) · `vrm-state` (data input)
+## Петте въпроса и уредите в тях
+
+- **Работната врата** — съботният аналитичен екран (`weekly-screen`, нелистнат адрес).
+- **1. В какъв режим сме?** — Macro Web (единната врата към US, EU, Китай) + четирите дълбочини:
+  `us-macro-dashboard`, `eu-macro-dashboard`, `china-macro-dashboard`, `bg-macro-dashboard`.
+  България е извън единната врата и извън сателитния контракт.
+- **2. Какво се промени?** — `macro-satellite`, дневният агрегатор, който произвежда
+  `organism.json` + `state.json` (жив, не в разработка).
+- **3. Кой води?** — ротация (`SP500-rotationradar`, `STOXX600-rotationradar`,
+  `ETF-rotationradar`), инерция (`SP500-momentumrank`, `stoxx600-momentumrank`)
+  и факторният инвентар (`stock-selection-dashboard`).
+- **4. Какво казват позиционирането и сентиментът?** — `cot-monitor`, поведенческият
+  барометър (на повърхността на `ETF-rotationradar`), `treasury-funding-radar`,
+  петролният сензор (`collectors`), `ai-hype-monitor`.
+- **5. Струва ли и къде са нивата?** — оценъчният орган (`valuation-screen`, нелистнат)
+  плюс два вътрешни органа без публичен линк: нивата (ТА) и секторният мост.
+
+Таблицата „Как работят каналите" на самата страница държи ритъма на всеки канал
+(кой кога се обновява и какво значи „свежо" за него).
 
 ## Структура
 
-- `index.html` — целият dashboard
+- `index.html` — цялата витрина (HTML + два скрипта: кръвната картина и значките за свежест)
 - `.github/workflows/deploy-pages.yml` — auto-deploy при push към `main`
-
-## Live URL
-
-След като създадеш repo `projects-overview` в GitHub и enable-неш Pages (Settings → Pages → Source: GitHub Actions):
-
-`https://tsvetoslavtsachev.github.io/projects-overview/`
